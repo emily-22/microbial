@@ -63,6 +63,8 @@ Resp50.models[[10]]  <- lmer( RespRateInd~ Temp + Nitrate + (1 | Stream), data=s
 Resp50.models[[11]]  <- lmer( RespRateInd~ Temp + Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[12]]  <- lmer( RespRateInd~ Conductivity + Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[13]]  <- lmer( RespRateInd~ Conductivity + Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[14]]  <- lmer( RespRateInd~ Conductivity + DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
+
 
 
 ## Creating a vector of names to trace back models in set
