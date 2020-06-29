@@ -52,6 +52,17 @@ library(AICcmodavg)
 Resp50.models<-list()
 Resp50.models[[1]]  <- lmer( RespRateInd~ Conductivity + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[2]]  <- lmer( RespRateInd~ DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[3]]  <- lmer( RespRateInd~ Temp + DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[4]]  <- lmer( RespRateInd~ Temp + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[5]]  <- lmer( RespRateInd~ Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[6]]  <- lmer( RespRateInd~ Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[7]]  <- lmer( RespRateInd~ SRP + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[8]]  <- lmer( RespRateInd~ Temp+SRP + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[9]]  <- lmer( RespRateInd~ Conductivity +SRP + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[10]]  <- lmer( RespRateInd~ Temp + Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[11]]  <- lmer( RespRateInd~ Temp + Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[12]]  <- lmer( RespRateInd~ Conductivity + Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[13]]  <- lmer( RespRateInd~ Conductivity + Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
 
 
 ## Creating a vector of names to trace back models in set
@@ -60,8 +71,8 @@ ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
 ##generate AICc table from candidate models so that you can control the model
 aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
 #############################
-
-
+r.squaredGLMM(Resp50.models[[1]])
+#####
 
 
 #Cellulose data - respiration with DIN seperated and no conductivity
