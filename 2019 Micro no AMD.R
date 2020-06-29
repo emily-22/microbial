@@ -1,3 +1,13 @@
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICmodavg)
+library(scatterplot3d)
+library(MuMIn)
+library(USDM)
+library(cowplot)
+
+
 micronoamd <- read.csv("Emily Data No AMD.csv")
 
 spongenoamd <- subset(micronoamd, Substrate=="Cellulose Sponge" & Week.Removed==4)
@@ -15,16 +25,16 @@ cs10 <- data.frame(scale(micronoamd$Conductivity),
                   scale(micronoamd$Ammonium),
                   scale(micronoamd$DIN))
 cs11 <- vifstep(cs10, th = 10)
-cs11
+vics11
 
 #Cellulose - resp with all
-resp50 <- lmer(RespRateInd ~ scale(DO) + 
+resp50 <- lmer(RespRateInd ~ #scale(DO) + 
                  scale(Temp) + 
-                 scale(Turbidity) +
+                 #scale(Turbidity) +
                  scale(Chloride) +
-                 scale(H) +
+                 #scale(H) +
                  scale(SRP) +
-                 scale(DIN) +
+                 #scale(DIN) +
                  scale(Conductivity) +
                  scale(Nitrate) +
                  scale(Ammonium) +
@@ -35,6 +45,22 @@ mod1_50 <- model.avg(get.models(mod50, subset = TRUE))
 summary(mod1_50)
 confint(mod1_50)
 r.squaredGLMM(resp50)
+
+############################ 
+############################ makeing lists of models#
+library(AICcmodavg)   
+Resp50.models<-list()
+Resp50.models[[1]]  <- lmer( RespRateInd~ Conductivity + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[2]]  <- lmer( RespRateInd~ DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
+
+
+## Creating a vector of names to trace back models in set
+ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
+#############################
+
 
 
 
