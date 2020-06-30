@@ -176,14 +176,20 @@ ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
 ##generate AICc table from candidate models so that you can control the model
 aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
 #############################
-
+r.squaredGLMM(Resp50.models[[1]])
+########
 
 #Top 5 models were 7, 19, 20, 12, 33
-#model 7: CHloride
-#model 19: CHloride + Nitrate
-#model 20: CHloride + Ammonium
+#model 7: Chloride
+#model 19: Chloride + Nitrate
+#model 20: Chloride + Ammonium
 #model 12: Temp + Chloride
 #model 33: Chloride + Ammonium + SRP
+
+plot(micronoamd$Chloride, micronoamd$RespRateInd)
+plot(micronoamd$Chloride, micronoamd$Nitrate)
+plot(micronoamd$Chloride, micronoamd$Ammonium)
+plot(micronoamd$Chloride, micronoamd$Temp)
 
 
 
