@@ -1,17 +1,20 @@
-library(lme4)
-library(ggplot2)
-library(ggmap)
-library(AICmodavg)
-library(scatterplot3d)
-library(MuMIn)
-library(USDM)
-library(cowplot)
-
-
 micronoamd <- read.csv("Emily Data No AMD.csv")
 
 spongenoamd <- subset(micronoamd, Substrate=="Cellulose Sponge" & Week.Removed==4)
 woodnoamd <- subset(micronoamd, Substrate=="Wood Veneer" & Week.Removed==6)
+
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICcmodavg)
+library(scatterplot3d)
+library(devtools)
+library(cowplot)
+library(MuMIn)
+library(usdm)
+
+plot(micronoamd$DIN, micronoamd$Conductivity)
+
 
 
 cs10 <- data.frame(scale(micronoamd$Conductivity),
@@ -25,16 +28,16 @@ cs10 <- data.frame(scale(micronoamd$Conductivity),
                   scale(micronoamd$Ammonium),
                   scale(micronoamd$DIN))
 cs11 <- vifstep(cs10, th = 10)
-vics11
+cs11
 
 #Cellulose - resp with all
-resp50 <- lmer(RespRateInd ~ #scale(DO) + 
+resp50 <- lmer(RespRateInd ~ scale(DO) + 
                  scale(Temp) + 
-                 #scale(Turbidity) +
+                 scale(Turbidity) +
                  scale(Chloride) +
-                 #scale(H) +
+                 scale(H) +
                  scale(SRP) +
-                 #scale(DIN) +
+                 scale(DIN) +
                  scale(Conductivity) +
                  scale(Nitrate) +
                  scale(Ammonium) +
@@ -46,35 +49,6 @@ summary(mod1_50)
 confint(mod1_50)
 r.squaredGLMM(resp50)
 
-############################ 
-############################ makeing lists of models#
-library(AICcmodavg)   
-Resp50.models<-list()
-Resp50.models[[1]]  <- lmer( RespRateInd~ Conductivity + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[2]]  <- lmer( RespRateInd~ DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[3]]  <- lmer( RespRateInd~ Temp + DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[4]]  <- lmer( RespRateInd~ Temp + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[5]]  <- lmer( RespRateInd~ Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[6]]  <- lmer( RespRateInd~ Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[7]]  <- lmer( RespRateInd~ SRP + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[8]]  <- lmer( RespRateInd~ Temp+SRP + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[9]]  <- lmer( RespRateInd~ Conductivity +SRP + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[10]]  <- lmer( RespRateInd~ Temp + Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[11]]  <- lmer( RespRateInd~ Temp + Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[12]]  <- lmer( RespRateInd~ Conductivity + Nitrate + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[13]]  <- lmer( RespRateInd~ Conductivity + Ammonium + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[14]]  <- lmer( RespRateInd~ Conductivity + DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
-
-
-
-## Creating a vector of names to trace back models in set
-ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
-
-##generate AICc table from candidate models so that you can control the model
-aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
-#############################
-r.squaredGLMM(Resp50.models[[1]])
-#####
 
 
 #Cellulose data - respiration with DIN seperated and no conductivity
@@ -125,9 +99,6 @@ r.squaredGLMM(resp52)
 
 
 
-
-
-
 #Wood data - respiration with DIN seperated and no conductivity
 resp54 <- lmer(RespRateInd ~ scale(DO) + 
                  scale(Temp) + 
@@ -145,6 +116,74 @@ summary(mod1_54)
 confint(mod1_54)
 
 
+
+
+
+############################ 
+############################ makeing lists of models#
+Resp50.models<-list()
+Resp50.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[2]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[3]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[4]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[5]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[6]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[7]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[8]]  <- lmer( RespRateInd~ scale(Temp) + DIN + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[9]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[10]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[11]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[13]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[14]]  <- lmer( RespRateInd~ scale(Conductivity) +scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[15]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[16]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[17]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Chloride) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[19]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[20]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[21]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[22]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[23]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[24]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Temp) + scale(Conductivity) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[25]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[26]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[27]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[28]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Conductivity) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[29]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Conductivity) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[30]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Conductivity) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[31]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[32]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[33]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+
+
+### got this error message when adding these Error in formatCands(cand.set) : Functions do not support mixture of model classes ####
+#Resp50.models[[34]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[35]]  <- lmer( RespRateInd~ scale(Conductivty) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[36]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[37]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[38]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[39]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[40]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[41]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[42]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#Resp50.models[[43]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+#####################
+
+## Creating a vector of names to trace back models in set
+ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
+#############################
+
+
+#Top 5 models were 7, 19, 20, 12, 33
+#model 7: CHloride
+#model 19: CHloride + Nitrate
+#model 20: CHloride + Ammonium
+#model 12: Temp + Chloride
+#model 33: Chloride + Ammonium + SRP
 
 
 
