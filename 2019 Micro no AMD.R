@@ -120,7 +120,7 @@ confint(mod1_54)
 
 
 ############################ 
-############################ makeing lists of models#
+############################ makeing lists of models for sponge#
 Resp50.models<-list()
 Resp50.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[2]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Stream), data=spongenoamd, REML = FALSE)
@@ -155,19 +155,16 @@ Resp50.models[[30]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Conductivity)
 Resp50.models[[31]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[32]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[33]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
-
-
-### got this error message when adding these Error in formatCands(cand.set) : Functions do not support mixture of model classes ####
-#Resp50.models[[34]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[35]]  <- lmer( RespRateInd~ scale(Conductivty) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[36]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[37]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[38]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[39]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[40]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[41]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[42]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
-#Resp50.models[[43]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[34]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[35]]  <- lmer( RespRateInd~ scale(Conductivty) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[36]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[37]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[38]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[39]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[40]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[41]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[42]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[43]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
 #####################
 
 ## Creating a vector of names to trace back models in set
@@ -176,15 +173,20 @@ ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
 ##generate AICc table from candidate models so that you can control the model
 aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
 #############################
-r.squaredGLMM(Resp50.models[[1]])
+#############################
+r.squaredGLMM(Resp50.models[[7]])
+r.squaredGLMM(Resp50.models[[19]])
+r.squaredGLMM(Resp50.models[[20]])
+r.squaredGLMM(Resp50.models[[12]])
+r.squaredGLMM(Resp50.models[[33]])
 ########
 
 #Top 5 sponge models were 7, 19, 20, 12, 33
-#model 7: Chloride
-#model 19: Chloride + Nitrate
-#model 20: Chloride + Ammonium
-#model 12: Temp + Chloride
-#model 33: Chloride + Ammonium + SRP
+#model 7: Chloride mR2 = 0.57, cR2=0.57 BSE
+#model 19: Chloride + Nitrate mR2 = 0.58, cR2=0.58 BSE
+#model 20: Chloride + Ammonium mR2 = 0.58, cR2=0.58 BSE
+#model 12: Temp + Chloride mR2 = 0.57, cR2=0.57 BSE
+#model 33: Chloride + Ammonium + SRP mR2 = 0.597, cR2=0.60 BSE
 
 plot(spongenoamd$Chloride, spongenoamd$RespRateInd)
 plot(spongenoamd$Chloride, spongenoamd$Nitrate)
@@ -192,6 +194,11 @@ plot(spongenoamd$Chloride, spongenoamd$Ammonium)
 plot(spongenoamd$Chloride, spongenoamd$Temp)
 
 
+
+
+
+#####################################                          ###
+##################################### creating models for Wood ###
 Resp51.models<-list()
 Resp51.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=woodnoamd, REML = FALSE)
 Resp51.models[[2]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Stream), data=woodnoamd, REML = FALSE)
@@ -226,19 +233,16 @@ Resp51.models[[30]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Conductivity)
 Resp51.models[[31]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
 Resp51.models[[32]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
 Resp51.models[[33]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
-
-
-### got this error message when adding these Error in formatCands(cand.set) : Functions do not support mixture of model classes ####
-#Resp51.models[[34]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[35]]  <- lmer( RespRateInd~ scale(Conductivty) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[36]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[37]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[38]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[39]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[40]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[41]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[42]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
-#Resp51.models[[43]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[34]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[35]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[36]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[37]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[38]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[39]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[40]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[41]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[42]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Resp51.models[[43]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
 #####################
 
 ## Creating a vector of names to trace back models in set
@@ -248,16 +252,25 @@ ModnamesResp51 <- paste("model", 1:length(Resp51.models), sep = " ")
 aictab(cand.set = Resp51.models, modnames = ModnamesResp51, sort = TRUE)
 #############################
 r.squaredGLMM(Resp51.models[[22]])
+r.squaredGLMM(Resp51.models[[28]])
+r.squaredGLMM(Resp51.models[[4]])
+r.squaredGLMM(Resp51.models[[10]])
+r.squaredGLMM(Resp51.models[[31]])
+r.squaredGLMM(Resp51.models[[43]])
+
 
 #Top 5 wood models were 22, 28, 4, 10, 31
-#model 22: Nitrate + Ammonium
-#model 28: Chloride + Nitrate + Conductivity
-#model 4: Nitrate
-#model 10: Temp + Nitrate
-#model 31: Chloride + Ammonium + Nitrate
+#model 22: Nitrate + Ammonium, mR2 = 0.34, cR2=0.34 BSE
+#model 28: Chloride + Nitrate + Conductivity mR2 = 0.37, cR2=0.37 BSE
+#model 4: Nitrate mR2 = 0.25, cR2=0.25 BSE
+#model 10: Temp + Nitrate mR2 = 0.30, cR2=0.30 BSE
+#model 31: Chloride + Ammonium + Nitrate mR2 = 0.36, cR2=0.36 BSE
 
 plot(woodnoamd$Nitrate, woodnoamd$Ammonium)
 plot(woodnoamd$Nitrate, woodnoamd$RespRateInd)
+plot(woodnoamd$Ammonium, woodnoamd$RespRateInd)
+plot(woodnoamd$Ammonium+woodnoamd$Nitrate, woodnoamd$RespRateInd)
+plot(woodnoamd$DIN, woodnoamd$RespRateInd)
 plot(woodnoamd$Nitrate, woodnoamd$Temp)
 
 
