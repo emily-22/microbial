@@ -267,10 +267,13 @@ r.squaredGLMM(Resp51.models[[43]])
 #model 31: Chloride + Ammonium + Nitrate mR2 = 0.36, cR2=0.36 BSE
 
 plot(woodnoamd$Nitrate, woodnoamd$Ammonium)
+
 plot(woodnoamd$Nitrate, woodnoamd$RespRateInd)
+abline(lm(woodnoamd$RespRateInd~woodnoamd$Nitrate))
+
 plot(woodnoamd$Ammonium, woodnoamd$RespRateInd)
-plot(woodnoamd$Ammonium+woodnoamd$Nitrate, woodnoamd$RespRateInd)
-plot(woodnoamd$DIN, woodnoamd$RespRateInd)
+plot(woodnoamd$Ammonium+woodnoamd$Nitrate, woodnoamd$RespRateInd) 
+plot(woodnoamd$DIN, woodnoamd$RespRateInd) 
 plot(woodnoamd$Nitrate, woodnoamd$Temp)
 
 
