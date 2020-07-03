@@ -156,7 +156,7 @@ Resp50.models[[31]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + s
 Resp50.models[[32]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[33]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[34]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
-Resp50.models[[35]]  <- lmer( RespRateInd~ scale(Conductivty) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Resp50.models[[35]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[36]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[37]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
 Resp50.models[[38]]  <- lmer( RespRateInd~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
@@ -173,15 +173,14 @@ ModnamesResp50 <- paste("model", 1:length(Resp50.models), sep = " ")
 ##generate AICc table from candidate models so that you can control the model
 aictab(cand.set = Resp50.models, modnames = ModnamesResp50, sort = TRUE)
 #############################
-#############################
 r.squaredGLMM(Resp50.models[[7]])
 r.squaredGLMM(Resp50.models[[19]])
 r.squaredGLMM(Resp50.models[[20]])
 r.squaredGLMM(Resp50.models[[12]])
 r.squaredGLMM(Resp50.models[[33]])
-########
 
 #Top 5 sponge models were 7, 19, 20, 12, 33
+
 #model 7: Chloride mR2 = 0.57, cR2=0.57 BSE
 #model 19: Chloride + Nitrate mR2 = 0.58, cR2=0.58 BSE
 #model 20: Chloride + Ammonium mR2 = 0.58, cR2=0.58 BSE
@@ -192,7 +191,6 @@ plot(spongenoamd$Chloride, spongenoamd$RespRateInd)
 plot(spongenoamd$Chloride, spongenoamd$Nitrate)
 plot(spongenoamd$Chloride, spongenoamd$Ammonium)
 plot(spongenoamd$Chloride, spongenoamd$Temp)
-
 
 
 
@@ -258,7 +256,6 @@ r.squaredGLMM(Resp51.models[[10]])
 r.squaredGLMM(Resp51.models[[31]])
 r.squaredGLMM(Resp51.models[[43]])
 
-
 #Top 5 wood models were 22, 28, 4, 10, 31
 #model 22: Nitrate + Ammonium, mR2 = 0.34, cR2=0.34 BSE
 #model 28: Chloride + Nitrate + Conductivity mR2 = 0.37, cR2=0.37 BSE
@@ -267,19 +264,139 @@ r.squaredGLMM(Resp51.models[[43]])
 #model 31: Chloride + Ammonium + Nitrate mR2 = 0.36, cR2=0.36 BSE
 
 plot(woodnoamd$Nitrate, woodnoamd$Ammonium)
-
 plot(woodnoamd$Nitrate, woodnoamd$RespRateInd)
 abline(lm(woodnoamd$RespRateInd~woodnoamd$Nitrate))
-
 plot(woodnoamd$Ammonium, woodnoamd$RespRateInd)
 plot(woodnoamd$Ammonium+woodnoamd$Nitrate, woodnoamd$RespRateInd) 
 plot(woodnoamd$DIN, woodnoamd$RespRateInd) 
 plot(woodnoamd$Nitrate, woodnoamd$Temp)
 
 
+####BREAKDOWN
+
+##sponge models
+Break50.models<-list()
+Break50.models[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[3]]  <- lmer( Breakdown~ scale(Temp) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[4]]  <- lmer( Breakdown~ scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[5]]  <- lmer( Breakdown~ scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[6]]  <- lmer( Breakdown~ scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[7]]  <- lmer( Breakdown~ scale(Chloride) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[8]]  <- lmer( Breakdown~ scale(Temp) + scale(DIN) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[9]]  <- lmer( Breakdown~ scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[10]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[11]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[12]]  <- lmer( Breakdown~ scale(Temp) + scale(Chloride) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[13]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[14]]  <- lmer( Breakdown~ scale(Conductivity) +scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[15]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[16]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[17]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Chloride) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[18]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[19]]  <- lmer( Breakdown~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[20]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[21]]  <- lmer( Breakdown~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[22]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[23]]  <- lmer( Breakdown~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[24]]  <- lmer( Breakdown~ scale(Chloride) + scale(Temp) + scale(Conductivity) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[25]]  <- lmer( Breakdown~ scale(Chloride) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[26]]  <- lmer( Breakdown~ scale(Chloride) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[27]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[28]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[29]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[30]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[31]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[32]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[33]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[34]]  <- lmer( Breakdown~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[35]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[36]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
+Break50.models[[37]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=spongenoamd, REML = FALSE)
 
 
+## Creating a vector of names to trace back models in set
+ModnamesBreak50 <- paste("model", 1:length(Break50.models), sep = " ")
 
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Break50.models, modnames = ModnamesBreak50, sort = TRUE)
+#############################
+r.squaredGLMM(Break50.models[[29]])
+r.squaredGLMM(Break50.models[[35]])
+r.squaredGLMM(Break50.models[[31]])
+r.squaredGLMM(Break50.models[[8]])
+r.squaredGLMM(Break50.models[[10]])
+
+#Top 5 models for sponge breakdown were 29, 35, 31, 8, 10
+#model 29: Conductivity + Temp + Nitrate mR2 = 0.87, cR2=1
+#model 35: Temp + Nitrate + SRP mR2 = 0.87, cR2=1
+#model 31: Conductivity + Temp + SRP mR2 = 0.86, cR2=1
+#model 8: Temp + DIN mR2 = 0.42, cR2=1
+#model 10: Temp + Nitrate mR2 = 0.55, cR2=1
+
+
+plot(spongenoamd$Temp, spongenoamd$DIN)
+plot(spongenoamd$Temp, spongenoamd$Nitrate)
+
+##Wood Breakdown
+Break51.models<-list()
+Break51.models[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[3]]  <- lmer( Breakdown~ scale(Temp) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[4]]  <- lmer( Breakdown~ scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[5]]  <- lmer( Breakdown~ scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[6]]  <- lmer( Breakdown~ scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[7]]  <- lmer( Breakdown~ scale(Chloride) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[8]]  <- lmer( Breakdown~ scale(Temp) + scale(DIN) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[9]]  <- lmer( Breakdown~ scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[10]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[11]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[12]]  <- lmer( Breakdown~ scale(Temp) + scale(Chloride) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[13]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[14]]  <- lmer( Breakdown~ scale(Conductivity) +scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[15]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[16]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[17]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Chloride) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[18]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[19]]  <- lmer( Breakdown~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[20]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[21]]  <- lmer( Breakdown~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[22]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[23]]  <- lmer( Breakdown~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[24]]  <- lmer( Breakdown~ scale(Chloride) + scale(Temp) + scale(Conductivity) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[25]]  <- lmer( Breakdown~ scale(Chloride) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[26]]  <- lmer( Breakdown~ scale(Chloride) + scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[27]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[28]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[29]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[30]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[31]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[32]]  <- lmer( Breakdown~ scale(Conductivity) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[33]]  <- lmer( Breakdown~ scale(Conductivity) + scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[34]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[35]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+Break51.models[[36]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + scale(SRP) + (1 | Stream), data=woodnoamd, REML = FALSE)
+
+
+## Creating a vector of names to trace back models in set
+ModnamesBreak51 <- paste("model", 1:length(Break51.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Break51.models, modnames = ModnamesBreak51, sort = TRUE)
+#############################
+r.squaredGLMM(Break51.models[[29]])
+r.squaredGLMM(Break51.models[[26]])
+r.squaredGLMM(Break51.models[[31]])
+r.squaredGLMM(Break51.models[[27]])
+r.squaredGLMM(Break51.models[[34]])
+
+
+#Top 5 models for wood breakdown were 29, 26, 31, 27, 34
+#model 29: Conductivity + Temp + Nitrate mR2 = 0.77, cR2=1
+#model 26: Chloride + Temp + SRP mR2 = 0.81, cR2=1
+#model 31: Conductivity + Temp + SRP mR2 = 0.82, cR2=1
+#model 27: Chloride + Ammonium + Nitrate mR2 = 0.78, cR2=1
+#model 34: Temp + Nitrate + SRP mR2 = 0.86, cR2=1
 
 
 
