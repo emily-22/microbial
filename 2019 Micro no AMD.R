@@ -1097,3 +1097,100 @@ abline(lm(woodnoamdCS$RespRateAvg ~ woodnoamdCS$Breakdown), lty = 1)
 
 
 
+#i tried to subset it didn't work i got an error
+spongeavgsub <- subset(micronoamdCS, c(14, 46, 78, 110, 142, 174, 206,
+                                       238, 270, 302))
+
+woodavgsub <- subset(micronoamdCS, c(31, 63, 95, 127, 159, 191, 223,
+                                     255, 287, 319))
+
+
+
+##########################################################################################
+#idk if i did what he wanted hehe
+averages <- read.csv("averages.csv")
+
+spongeavg <- subset(averages, Substrate=="Cellulose Sponge")
+woodavg <- subset(averages, Substrate=="Wood Veneer")
+
+cBreak_avgs<-list()
+cBreak_avgs[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[3]]  <- lmer( Breakdown~ scale(Temp) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[4]]  <- lmer( Breakdown~ scale(Nitrate) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[5]]  <- lmer( Breakdown~ scale(Ammonium) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[6]]  <- lmer( Breakdown~ scale(SRP) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[7]]  <- lmer( Breakdown~ scale(Chloride) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[8]]  <- lmer( Breakdown~ scale(Temp) + scale(SRP) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[9]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[10]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[11]]  <- lmer( Breakdown~ scale(Temp) + scale(Chloride) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[12]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[13]]  <- lmer( Breakdown~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[14]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[15]]  <- lmer( Breakdown~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[16]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[17]]  <- lmer( Breakdown~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongeavg, REML = FALSE)
+cBreak_avgs[[18]]  <- lmer( Breakdown~  (1 | Stream), data=spongeavg, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+ModnamescBreak_avgs <- paste("model", 1:length(cBreak_avgs), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = cBreak_avgs, modnames = ModnamescBreak_avgs, sort = TRUE)
+#############################
+
+r.squaredGLMM(cBreak_avgs[[18]])
+r.squaredGLMM(cBreak_avgs[[7]])
+r.squaredGLMM(cBreak_avgs[[3]])
+r.squaredGLMM(cBreak_avgs[[1]])
+r.squaredGLMM(cBreak_avgs[[4]])
+
+plot(spongeavg$Chloride, spongeavg$RespRateAvg)
+
+
+
+
+wBreak_avgs<-list()
+wBreak_avgs[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[3]]  <- lmer( Breakdown~ scale(Temp) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[4]]  <- lmer( Breakdown~ scale(Nitrate) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[5]]  <- lmer( Breakdown~ scale(Ammonium) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[6]]  <- lmer( Breakdown~ scale(SRP) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[7]]  <- lmer( Breakdown~ scale(Chloride) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[8]]  <- lmer( Breakdown~ scale(Temp) + scale(SRP) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[9]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[10]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[11]]  <- lmer( Breakdown~ scale(Temp) + scale(Chloride) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[12]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[13]]  <- lmer( Breakdown~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[14]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[15]]  <- lmer( Breakdown~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[16]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[17]]  <- lmer( Breakdown~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodavg, REML = FALSE)
+wBreak_avgs[[18]]  <- lmer( Breakdown~  (1 | Stream), data=woodavg, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+ModnameswBreak_avgs <- paste("model", 1:length(wBreak_avgs), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = wBreak_avgs, modnames = ModnameswBreak_avgs, sort = TRUE)
+#############################
+
+r.squaredGLMM(wBreak_avgs[[18]])
+r.squaredGLMM(wBreak_avgs[[7]])
+r.squaredGLMM(wBreak_avgs[[3]])
+r.squaredGLMM(wBreak_avgs[[1]])
+r.squaredGLMM(wBreak_avgs[[4]])
+
+
+
+plot(woodavg$Chloride, woodavg$RespRateAvg)
+
+
+
+
+
+
+
