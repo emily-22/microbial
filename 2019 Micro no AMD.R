@@ -1089,7 +1089,11 @@ r.squaredGLMM(wBreak_NOAMDCS.models[[8]])
 
 
 
+plot(spongenoamdCS$RespRateAvg ~ spongenoamdCS$Breakdown)
+abline(lm(spongenoamdCS$RespRateAvg ~ spongenoamdCS$Breakdown), lty = 1)
 
+plot(woodnoamdCS$RespRateAvg ~ woodnoamdCS$Breakdown)
+abline(lm(woodnoamdCS$RespRateAvg ~ woodnoamdCS$Breakdown), lty = 1)
 
 
 
