@@ -30,7 +30,7 @@ cs10 <- data.frame(scale(micronoamd$Conductivity),
 cs11 <- vifstep(cs10, th = 10)
 cs11
 
-# The VIF score indicates taht the same two variabels are colinear
+# The VIF score indicates that the same two variabels are colinear
 # Going to use same selected models as we did with the 
 # the full model 
 
@@ -101,7 +101,6 @@ summary(mod1_52)
 confint(mod1_52)
 r.squaredGLMM(resp52)
 
-
 #########################################################################################
 #########################################################################################
 #####
@@ -138,7 +137,7 @@ ModnamesbResp_NOAMD <- paste("model", 1:length(bResp_NOAMD.models), sep = " ")
 aictab(cand.set = bResp_NOAMD.models, modnames = ModnamesbResp_NOAMD, sort = TRUE)
 #############################
 # Model selection based on AICc:
-  
+
 #  K   AICc Delta_AICc AICcWt Cum.Wt     LL
 # model 7  4 146.25       0.00   0.34   0.34 -68.61
 # model 13 5 147.16       0.91   0.21   0.55 -67.79
@@ -195,14 +194,13 @@ confint(bResp_NOAMD.models[[14]])
 # scale(Ammonium) -0.6509414 0.1485567
 
 
-# Summary of Spong Respiration #########
+# Summary of Sponge Respiration #########
 #########################################
 # This these results indicate that something very similar to our model with the
 # full set of sites, except that we have a more predictive power (highR2 value)
-# This is good, but these results have the CrCs in it. I'm hoping the boundary singularity issues
-# might be resolved if we drop the CrCs
+# This is good, but these results have the CsCr in it. I'm hoping the boundary singularity issues
+# might be resolved if we drop the CsCr
 #
-
 
 
 
@@ -300,13 +298,9 @@ plot(spongenoamd$Chloride, spongenoamd$Ammonium)
 plot(spongenoamd$Chloride, spongenoamd$Temp)
 
 
-
 ###################################################################################################
 #######################################   Respiration Models with Wood ############################
 ###################################################################################################
-
-
-
 
 #####################################                          ###
 ##################################### creating models for Wood ###
@@ -384,12 +378,9 @@ plot(woodnoamd$Ammonium+woodnoamd$Nitrate, woodnoamd$RespRateInd)
 plot(woodnoamd$DIN, woodnoamd$RespRateInd) 
 plot(woodnoamd$Nitrate, woodnoamd$Temp)
 
-
-
 ###############################   Wood Respiration with Restricted Set of Models
 ###############################
 ###############################
-
 
 cResp_NOAMD.models<-list()
 cResp_NOAMD.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=woodnoamd, REML = FALSE)
@@ -420,7 +411,7 @@ aictab(cand.set = cResp_NOAMD.models, modnames = ModnamescResp_NOAMD, sort = TRU
 
 
 # Model selection based on AICc:
-  
+
 #  K    AICc Delta_AICc AICcWt Cum.Wt    LL
 # model 16 5 -117.44       0.00   0.37   0.37 64.83
 # model 4  4 -116.14       1.31   0.19   0.56 62.78
@@ -459,8 +450,6 @@ confint(cResp_NOAMD.models[[16]])
 ###################################################################################################
 #######################################   Breakdown Models with Wood ############################
 ###################################################################################################
-
-
 
 
 
@@ -531,7 +520,6 @@ r.squaredGLMM(Break50.models[[10]])
 plot(spongenoamd$Temp, spongenoamd$DIN)
 plot(spongenoamd$Temp, spongenoamd$Nitrate)
 
-
 ##############
 ############## Sponge Breakdown using a more restricted set of models
 ##############
@@ -568,7 +556,7 @@ aictab(cand.set = bBreak_NOAMD.models, modnames = ModnamesbBreak_NOAMD, sort = T
 
 
 # Model selection based on AICc:
-  
+
 #   K    AICc Delta_AICc AICcWt Cum.Wt     LL
 # model 9  5 -588.27       0.00      1      1 299.92
 # model 15 5 -357.18     231.09      0      1 184.38
@@ -587,6 +575,7 @@ r.squaredGLMM(bBreak_NOAMD.models[[9]])
 # data entered. Each site will only have one breakdown rate number (beacsue breakdown intergrated overtime
 # and comes from estimating a slope to the substrate mass remaining). So we need to get the data such that each site
 # has one breakdown number that we are using for the regression stats. 
+
 
 
 
@@ -654,23 +643,11 @@ r.squaredGLMM(Break51.models[[34]])
 
 
 
+########################################################################
+######################## WITHOUT CRAP STREAM ###########################
+########################################################################
 
 
-
-
-
-
-
-
-
-
-
-####
-#### 
-#### WITHOUT CRAP STREAM ############
-####
-####
-####
 
 
 micronoamdCS <- read.csv("Emily Data No AMD or CS.csv")
@@ -745,6 +722,48 @@ r.squaredGLMM(Resp52.models[[32]])
 #model 32: Chloride + Nitrate + SRP mR2 = 0.6, cR2=0.6
 
 
+cResp_NOAMDCS.models<-list()
+cResp_NOAMDCS.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[2]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[3]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[4]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[5]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[6]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[7]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[8]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[9]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[10]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[11]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[12]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[13]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[14]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[15]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[16]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[17]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cResp_NOAMDCS.models[[18]]  <- lmer( RespRateInd~  (1 | Stream), data=spongenoamdCS, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+ModnamescResp_NOAMDCS <- paste("model", 1:length(cResp_NOAMDCS.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = cResp_NOAMDCS.models, modnames = ModnamescResp_NOAMDCS, sort = TRUE)
+
+#Model selection based on AICc:
+  
+#  K   AICc Delta_AICc AICcWt Cum.Wt     LL
+#model 7  4 135.21       0.00   0.32   0.32 -63.04
+#model 12 5 136.30       1.09   0.19   0.51 -62.27
+#model 13 5 136.71       1.49   0.15   0.67 -62.47
+
+
+r.squaredGLMM(cResp_NOAMDCS.models[[7]])
+r.squaredGLMM(cResp_NOAMDCS.models[[12]])
+r.squaredGLMM(cResp_NOAMDCS.models[[13]])
+r.squaredGLMM(cResp_NOAMDCS.models[[11]])
+r.squaredGLMM(cResp_NOAMDCS.models[[14]])
+
+
+
 #Wood resp
 Resp53.models<-list()
 Resp53.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
@@ -811,21 +830,48 @@ r.squaredGLMM(Resp53.models[[21]])
 #model 2: DIN + Temp mR2 = 0.24, cR2=0.24
 #model 21: Nitrate + SRP mR2 = 0.31, cR2=0.31
 
+wResp_NOAMDCS.models<-list()
+wResp_NOAMDCS.models[[1]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[2]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[3]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[4]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[5]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[6]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[7]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[8]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[9]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[10]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[11]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[12]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[13]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[14]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[15]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[16]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[17]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wResp_NOAMDCS.models[[18]]  <- lmer( RespRateInd~  (1 | Stream), data=woodnoamdCS, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+ModnameswResp_NOAMDCS <- paste("model", 1:length(wResp_NOAMDCS.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = wResp_NOAMDCS.models, modnames = ModnameswResp_NOAMDCS, sort = TRUE)
+
+#Model selection based on AICc:
+  
+#  K    AICc Delta_AICc AICcWt Cum.Wt    LL
+#model 4  4 -112.41       0.00   0.34   0.34 61.01
+#model 13 5 -110.82       1.59   0.15   0.50 61.66
+#model 2  4 -110.49       1.92   0.13   0.63 60.05
+
+r.squaredGLMM(wResp_NOAMDCS.models[[4]])
+r.squaredGLMM(wResp_NOAMDCS.models[[13]])
+r.squaredGLMM(wResp_NOAMDCS.models[[2]])
+r.squaredGLMM(wResp_NOAMDCS.models[[15]])
+r.squaredGLMM(wResp_NOAMDCS.models[[16]])
 
 
 
-
-
-
-
-####
-####
-###
-###      Sponge Breakdown
-###
-
-
-
+#Sponge Breakdown
 Break52.models<-list()
 Break52.models[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
 Break52.models[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
@@ -890,6 +936,47 @@ r.squaredGLMM(Break52.models[[31]])
 #model 37: Conductivity + Nitrate + Ammonium mR2 = 0.80, cR2=1
 #model 40: Temp + Nitrate + Ammonium mR2 = 0.86, cR2=1
 #model 31: Chloride + Nitrate + Ammonium mR2 = 0.8, cR2=0.1
+
+
+cBreak_NOAMDCS.models<-list()
+cBreak_NOAMDCS.models[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[3]]  <- lmer( Breakdown~ scale(Temp) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[4]]  <- lmer( Breakdown~ scale(Nitrate) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[5]]  <- lmer( Breakdown~ scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[6]]  <- lmer( Breakdown~ scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[7]]  <- lmer( Breakdown~ scale(Chloride) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[8]]  <- lmer( Breakdown~ scale(Temp) + scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[9]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[10]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[11]]  <- lmer( Breakdown~ scale(Temp) + scale(Chloride) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[12]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[13]]  <- lmer( Breakdown~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[14]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[15]]  <- lmer( Breakdown~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[16]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[17]]  <- lmer( Breakdown~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=spongenoamdCS, REML = FALSE)
+cBreak_NOAMDCS.models[[18]]  <- lmer( Breakdown~  (1 | Stream), data=spongenoamdCS, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+ModnamescBreak_NOAMDCS <- paste("model", 1:length(cBreak_NOAMDCS.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = cBreak_NOAMDCS.models, modnames = ModnamescBreak_NOAMDCS, sort = TRUE)
+#############################
+
+#Model selection based on AICc:
+  
+#  K    AICc Delta_AICc AICcWt Cum.Wt     LL
+#model 9  5 -533.21       0.00      1      1 272.49
+#model 16 5 -400.00     133.21      0      1 205.88
+#model 15 5 -321.15     212.06      0      1 166.46
+
+r.squaredGLMM(cBreak_NOAMDCS.models[[9]])
+r.squaredGLMM(cBreak_NOAMDCS.models[[16]])
+r.squaredGLMM(cBreak_NOAMDCS.models[[15]])
+r.squaredGLMM(cBreak_NOAMDCS.models[[12]])
+r.squaredGLMM(cBreak_NOAMDCS.models[[13]])
 
 
 #Wood Breakdown
@@ -959,6 +1046,45 @@ r.squaredGLMM(Break53.models[[28]])
 #model 28: Chloride + Conductivity + Nitrate mR2 = 0.81, cR2=1
 
 
+wBreak_NOAMDCS.models<-list()
+wBreak_NOAMDCS.models[[1]]  <- lmer( Breakdown~ scale(Conductivity) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[2]]  <- lmer( Breakdown~ scale(DIN) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[3]]  <- lmer( Breakdown~ scale(Temp) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[4]]  <- lmer( Breakdown~ scale(Nitrate) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[5]]  <- lmer( Breakdown~ scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[6]]  <- lmer( Breakdown~ scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[7]]  <- lmer( Breakdown~ scale(Chloride) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[8]]  <- lmer( Breakdown~ scale(Temp) + scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[9]]  <- lmer( Breakdown~ scale(Temp) + scale(Nitrate) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[10]]  <- lmer( Breakdown~ scale(Temp) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[11]]  <- lmer( Breakdown~ scale(Temp) + scale(Chloride) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[12]]  <- lmer( Breakdown~ scale(Chloride) + scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[13]]  <- lmer( Breakdown~ scale(Chloride) + scale(Nitrate) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[14]]  <- lmer( Breakdown~ scale(Chloride) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[15]]  <- lmer( Breakdown~ scale(Nitrate) + scale(SRP) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[16]]  <- lmer( Breakdown~ scale(Nitrate) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[17]]  <- lmer( Breakdown~ scale(SRP) + scale(Ammonium) + (1 | Stream), data=woodnoamdCS, REML = FALSE)
+wBreak_NOAMDCS.models[[18]]  <- lmer( Breakdown~  (1 | Stream), data=woodnoamdCS, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+ModnameswBreak_NOAMDCS <- paste("model", 1:length(wBreak_NOAMDCS.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = wBreak_NOAMDCS.models, modnames = ModnameswBreak_NOAMDCS, sort = TRUE)
+
+
+#Model selection based on AICc:
+  
+#  K    AICc Delta_AICc AICcWt Cum.Wt     LL
+#model 12 5 -402.98       0.00   0.73   0.73 207.74
+#model 15 5 -401.01       1.97   0.27   1.00 206.75
+#model 13 5 -363.79      39.19   0.00   1.00 188.15
+
+r.squaredGLMM(wBreak_NOAMDCS.models[[12]])
+r.squaredGLMM(wBreak_NOAMDCS.models[[15]])
+r.squaredGLMM(wBreak_NOAMDCS.models[[13]])
+r.squaredGLMM(wBreak_NOAMDCS.models[[6]])
+r.squaredGLMM(wBreak_NOAMDCS.models[[8]])
 
 
 
