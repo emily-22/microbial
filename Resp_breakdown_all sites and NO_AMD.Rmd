@@ -320,10 +320,13 @@ scale(H)       -0.044666162 -0.01312626
 scale(Nitrate)  0.005343637  0.03688354
 
 
-Here we see a decrease in respration with increaing H+ (decreasing pH) and that nitrogen has a positive influence on respiration rate
+Here we see a decrease in respration with increaing H+ (decreasing pH) and that nitrogen has a positive influence on respiration rate. 
 
 ```{r}
 confint(wResp2.models[[36]])
 confint(wResp2.models[[37]])
 confint(wResp2.models[[18]])
 ```
+
+
+Now you should run these model throug the revised breakdown data and then run it all through the NOAMDCS model. 
