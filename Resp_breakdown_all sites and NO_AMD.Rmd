@@ -1,0 +1,329 @@
+---
+title: "Emily’s Respiration and Breakdown Data"
+author: "Emily Huff and James Wood"
+date: "July 15, 2020"
+output: html_document
+---
+
+Starting here - 
+
+Loading data files for the whole data set and for the NO AMD (including no Crap Stream)
+
+```{r}
+microdf <- read.csv("Emily Data.csv")
+
+spongedf <- subset(microdf, Substrate=="Cellulose Sponge" & Week.Removed==4)
+wooddf <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==6)
+
+
+
+micronoamdCS <- read.csv("Emily Data No AMD or CS.csv")
+
+spongenoamdCS <- subset(micronoamdCS, Substrate=="Cellulose Sponge" & Week.Removed==4)
+woodnoamdCS <- subset(micronoamdCS, Substrate=="Wood Veneer" & Week.Removed==6)
+```
+
+Loading Libraries
+```{r}
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICcmodavg)
+library(scatterplot3d)
+library(devtools)
+library(cowplot)
+library(MuMIn)
+library(usdm)
+
+```
+
+Looking for colinearity in the predictor variables using VIFSTEP function.
+
+Result: VIF score indicates DIN and conductivity has a collinearity problem,
+and need to be removed from the data set if used in conjunction with other variables. We can still use them indicidually. 
+```{r}
+cs1 <- data.frame(scale(microdf$Conductivity),
+                  scale(microdf$H),
+                  scale(microdf$DO),
+                  scale(microdf$Turbidity),
+                  scale(microdf$Temp),
+                  scale(microdf$Chloride),
+                  scale(microdf$SRP),
+                  scale(microdf$Nitrate),
+                  scale(microdf$Ammonium),
+                  scale(microdf$DIN))
+cs2 <- vifstep(cs1, th = 10)
+cs2
+```
+
+
+
+# This will plot the x~y relationship of all the variables. 
+
+Result: From looking at these gaphs you can see why the conductivity and DIN were removed. DIN appears to be strongly correlated with Nitrate and Ammonia - this is expected, and Conductivity and Chloride appear to be correlated. This would be expected also. DIN and Conductivity also appear to correlated with other variables. 
+```{r}
+pairs(~Conductivity+    H+     DO+ Turbidity+ Temp+    Chloride+      SRP+      Nitrate+         +       Ammonium+      DIN, data=spongedf)
+```
+
+Here we see how well the different models fit the data. Remember that AIC only says what is the top model, here we are able to see how well models fit the data. 
+
+
+Becase we only have 13 sites in the whole data set we will later remove the AMD impacted sites we only have 10 sites, we really should limit the number of predictors in our model. Ideally you have at least 10 sites for each predcitors. This is often unrealistic, but we'll limit ourselves to models with two or less predictor variables just to be a bit conservative. If need be, we can also reduce it further)
+
+ 
+
+# Using a more limited set of models so that we are not overfitting
+# This is the same set of models (i.e. water chemistry predictors) that were
+# chosen to use with the sponge data. 
+
+
+
+###############################################################################################
+###############################################################################################
+
+Models for Respiration on Sponge substrates
+
+###############################################################################################
+
+I added turbidity, DO, and H to the model choices. Also I changed the random effect to Site so that we are modeling in a way that says there is variation in each site. If we don't do it that way, then we would need to get a site average of respiration instead of individual respiration.
+
+
+
+Results: Model selection based on AICc:
+
+         K   AICc Delta_AICc AICcWt Cum.Wt     LL
+model 35 5 172.50       0.00   0.94   0.94 -80.58
+model 17 5 181.29       8.79   0.01   0.95 -84.98
+model 11 4 182.83      10.33   0.01   0.96 -86.98
+
+: Note there are some errors in running these models that not all of them converged, which I will need to look into what's going on. 
+
+```{r}
+bResp2.models<-list()
+bResp2.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=spongedf, REML = FALSE)
+
+bResp2.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=spongedf, REML = FALSE)
+
+bResp2.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=spongedf, REML = FALSE)
+
+
+bResp2.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+
+
+bResp2.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+
+
+
+bResp2.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=spongedf, REML = FALSE)
+
+bResp2.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=spongedf, REML = FALSE)
+
+
+bResp2.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[38]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+bResp2.models[[39]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=spongedf, REML = FALSE)
+
+
+
+
+## Creating a vector of names to trace back models in set
+bModnamesResp2 <- paste("model", 1:length(bResp2.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = bResp2.models, modnames = bModnamesResp2, sort = TRUE)
+```
+ 
+ Here we see how well the different models fit the data. Remember that AIC only says what is the top model, here we are able to see how well models fit the data. 
+ 
+ Results:
+            R2m       R2c
+[1,] 0.4712246 0.5306028
+           R2m       R2c
+[1,] 0.2844831 0.5387683
+           R2m       R2c
+[1,] 0.1463665 0.5370639
+
+```{r}
+r.squaredGLMM(bResp2.models[[35]])
+r.squaredGLMM(bResp2.models[[17]])
+r.squaredGLMM(bResp2.models[[11]])
+```
+
+Lastly we see how big of an effect our predictor variables have on respiration rate. 
+From Model 35
+                     2.5 %     97.5 %
+.sig01           0.0000000  0.9372557
+.sigma           0.9026332  1.4248560
+(Intercept)      1.4850883  2.2998680
+scale(H)        -2.1998751 -0.8447089
+scale(Chloride)  1.1523261  2.5057583
+
+```{r}
+confint(bResp2.models[[35]])
+confint(bResp2.models[[17]])
+confint(bResp2.models[[11]])
+```
+
+Conclusion: 
+The only model that had much support was Chloride + H and we have a pretty good mR2 value, indicating that we were able to explain 47% of the variation in the data with this model. 
+If you plot choloride and H .. plot (Chloride~H, data=spongedf) .. you can see that we have this one really low pH site (high H) with a big difference between it and the other sites, AND it is our really high chloride site. 
+
+
+
+
+
+
+
+
+
+###############################################################################################
+###############################################################################################
+
+Models for Respiration on Sponge substrates
+
+###############################################################################################
+
+
+
+
+Now running the models with Wood
+
+
+
+
+
+
+Model selection based on AICc:
+
+         K    AICc Delta_AICc AICcWt Cum.Wt    LL
+model 36 5 -138.80       0.00   0.34   0.34 75.31
+model 37 5 -135.66       3.15   0.07   0.41 73.74
+
+
+```{r}
+wResp2.models<-list()
+wResp2.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=wooddf, REML = FALSE)
+
+wResp2.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=wooddf, REML = FALSE)
+
+wResp2.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=wooddf, REML = FALSE)
+
+
+wResp2.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+
+
+wResp2.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+
+
+
+wResp2.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
+
+wResp2.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
+
+
+wResp2.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[38]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[39]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=wooddf, REML = FALSE)
+
+
+
+
+## Creating a vector of names to trace back models in set
+wModnamesResp2 <- paste("model", 1:length(wResp2.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = wResp2.models, modnames = wModnamesResp2, sort = TRUE)
+```
+
+
+Results 
+     R2m       R2c
+[36] 0.3492535 0.4366029
+           R2m       R2c
+[37] 0.2724751 0.4354839
+           R2m       R2c
+[18] 0.2674541 0.4354107
+
+Here are best model was able to 35% of the variation in data for Wood veners. 
+
+```{r}
+r.squaredGLMM(wResp2.models[[36]])
+r.squaredGLMM(wResp2.models[[37]])
+r.squaredGLMM(wResp2.models[[18]])
+```
+
+
+Results:
+                      2.5 %      97.5 %
+.sig01          0.000000000  0.03049484
+.sigma          0.025658537  0.04394110
+(Intercept)     0.100450243  0.12742971
+scale(H)       -0.044666162 -0.01312626
+scale(Nitrate)  0.005343637  0.03688354
+
+
+Here we see a decrease in respration with increaing H+ (decreasing pH) and that nitrogen has a positive influence on respiration rate
+
+```{r}
+confint(wResp2.models[[36]])
+confint(wResp2.models[[37]])
+confint(wResp2.models[[18]])
+```
