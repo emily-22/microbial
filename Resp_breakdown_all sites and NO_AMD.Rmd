@@ -67,7 +67,7 @@ cs2
 
 
 
-# This will plot the x~y relationship of all the variables. 
+## This will plot the x~y relationship of all the variables. 
 
 Result: From looking at these gaphs you can see why the conductivity and DIN were removed. DIN appears to be strongly correlated with Nitrate and Ammonia - this is expected, and Conductivity and Chloride appear to be correlated. This would be expected also. DIN and Conductivity also appear to correlated with other variables. 
 ```{r}
@@ -88,7 +88,7 @@ Becase we only have 13 Sites in the whole data set we will later remove the AMD 
 
 
 ######################################################################################
-                        Sponge Models
+##                        Sponge Models
 #####################################################################################
 
 Models for Respiration on Sponge substrates
@@ -100,7 +100,7 @@ I added turbidity, DO, and H to the model choices. Also I changed the random eff
 
 
 
-AICc Results for Sponge 
+## AICc Results for Sponge with all the sties
 Model selection based on AICc:
 
          K   AICc Delta_AICc AICcWt Cum.Wt     LL
@@ -169,7 +169,7 @@ bModnamesResp2 <- paste("model", 1:length(bResp2.models), sep = " ")
 aictab(cand.set = bResp2.models, modnames = bModnamesResp2, sort = TRUE)
 ```
  
- Here we see how well the different models fit the data. Remember that AIC only says what is the top model, here we are able to see how well models fit the data. 
+## Here we see how well the different models fit the data. Remember that AIC only says what is the top model, here we are able to see how well models fit the data. 
  
  Results:
            R2m       R2c
@@ -223,7 +223,7 @@ plot(H~Chloride, data=spongedf)
 ############################################################################################################################################################################
 
 
-Models for Respiration on Wood substrates
+## Models for Respiration on Wood substrates
 
 ############################################################################################################################################################################
 
@@ -320,13 +320,20 @@ r.squaredGLMM(wResp2.models[[3]])
 #
 
 Results for Wood Model parameters:
-                       2.5 %       97.5 %
+[37]                       2.5 %       97.5 %
 .sig01           0.000000000  0.021760060
 .sigma           0.021252057  0.035681881
 (Intercept)      0.100059636  0.120075464
 scale(H)        -0.030626307 -0.009893319
 scale(Ammonium)  0.004746742  0.025480391
 
+[18]
+                       2.5 %       97.5 %
+.sig01           0.000000000  0.025099866
+.sigma           0.021115050  0.036448496
+(Intercept)      0.099008188  0.121237632
+scale(Chloride) -0.033088800 -0.007897834
+scale(Ammonium)  0.007556713  0.032792015
 
 Here we see a decrease in respration with increaing H+ (decreasing pH) and that Ammonium has a positive influence on respiration rate. 
 
@@ -336,9 +343,26 @@ confint(wResp2.models[[18]])
 confint(wResp2.models[[3]])
 ```
 
+##
+```{r}
+NAMD <- data.frame(scale(spongenoamdCS$Conductivity),
+                  scale(spongenoamdCS$H),
+                  scale(spongenoamdCS$DO),
+                  scale(spongenoamdCS$Turbidity),
+                  scale(spongenoamdCS$Temp),
+                  scale(spongenoamdCS$Chloride),
+                  scale(spongenoamdCS$SRP),
+                  scale(spongenoamdCS$Nitrate),
+                  scale(spongenoamdCS$Ammonium),
+                  scale(spongenoamdCS$DIN))
+NAMD2 <- vifstep(NAMD, th = 10)
+NAMD2
+```
 
 
-No AMD below here
+
+
+## No AMD below here
 ###############################
 ###############################
 
@@ -355,15 +379,6 @@ model 25 5  86.67       1.11   0.13   0.71 -37.42
 model 15 5  87.23       1.68   0.10   0.80 -37.71
 
 
-No Errors or Boundary Singularity issues
-          K   AICc Delta_AICc AICcWt Cum.Wt     LL
- model 11 4  85.56       0.00   0.22   0.22 -38.19
- model 17 5  85.68       0.13   0.21   0.43 -36.93
- model 35 5  86.34       0.79   0.15   0.58 -37.26
- model 25 5  86.67       1.11   0.13   0.71 -37.42
- model 15 5  87.23       1.68   0.10   0.80 -37.71
- model 31 5  87.98       2.42   0.07   0.87 -38.08
- model 16 5  88.16       2.61   0.06   0.93 -38.17
 
 
 ```{r}
@@ -375,29 +390,20 @@ namdResp2.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=sponge
 namdResp2.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=spongenoamdCS, REML = FALSE)
-
 namdResp2.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=spongenoamdCS, REML = FALSE)
-
 namdResp2.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=spongenoamdCS, REML = FALSE)
-
-
 namdResp2.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=spongenoamdCS, REML = FALSE)
-
-
 namdResp2.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=spongenoamdCS, REML = FALSE)
-
-
-
 namdResp2.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
@@ -405,15 +411,12 @@ namdResp2.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)
 namdResp2.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
-
 namdResp2.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
-
-
 namdResp2.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
 namdResp2.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=spongenoamdCS, REML = FALSE)
@@ -501,7 +504,11 @@ confint(namdResp2.models[[11]])
 Chloride alone becomes the top model when removing the amd Sites, accounting for 78% of the variation for sponge respiration. No of the other models provide much more predictive ability as the confidence intervals cross zero - however - including the variables did help the model fit. 
 
 
-Wood Respiration
+
+
+
+## Wood Respiration
+
 Model selection based on AICc:
 
          K    AICc Delta_AICc AICcWt Cum.Wt    LL
@@ -593,6 +600,9 @@ Results:
 r.squaredGLMM(namdResp3.models[[1]])
 r.squaredGLMM(namdResp3.models[[8]])
 r.squaredGLMM(namdResp3.models[[7]])
+r.squaredGLMM(namdResp3.models[[11]])
+r.squaredGLMM(namdResp3.models[[3]])
+r.squaredGLMM(namdResp3.models[[2]])
 ```
 
 ```{r}
@@ -610,7 +620,7 @@ confint(namdResp3.models[[7]])
 
 
 ##################################################################################################
-Breakdown
+# Breakdown Rates
 ##################################################################################################
 No AMD
 
@@ -699,7 +709,7 @@ aictab(cand.set = camdBreak_avgs, modnames = ModnamescamdBreak_avgs, sort = TRUE
 #############################
 ```
 
-All site - what predicts breakdown on sponge?
+# Breakdown with All site - what predicts breakdown on sponge?
 
  No need to use the LMER function here - only one number per site - Stream isn't a bad idea and we perhaps should think more about it - here is just a simple linear model 
  Model selection based on AICc:
@@ -855,70 +865,75 @@ Emily - I made a quick set of models - I'd like you to update the rest of the li
 
 
 ```{r}
-awBreak_avgs<-list()
+aawBreak_avgs<-list()
  #wBreak_avgs[[1]]  <- lm( Breakdown~ (, data=woodbdnoAMD, REML = FALSE)
- awBreak_avgs[[1]]  <- lm( Breakdown~ scale(Conductivity) , data=woodbdnoAMD)
- awBreak_avgs[[2]]  <- lm( Breakdown~ scale(H) , data=woodbdnoAMD)
- awBreak_avgs[[3]]  <- lm( Breakdown~ scale(DO), data=woodbdnoAMD)
- awBreak_avgs[[4]]  <- lm( Breakdown~ scale(Turbidity), data=woodbdnoAMD)
- awBreak_avgs[[5]]  <- lm( Breakdown~ scale(Temp), data=woodbdnoAMD)
- awBreak_avgs[[6]]  <- lm( Breakdown~ scale(DIN), data=woodbdnoAMD)
+ aawBreak_avgs[[1]]  <- lm( Breakdown~ scale(Conductivity) , data=woodbdnoAMD)
+ aawBreak_avgs[[2]]  <- lm( Breakdown~ scale(H) , data=woodbdnoAMD)
+ aawBreak_avgs[[3]]  <- lm( Breakdown~ scale(DO), data=woodbdnoAMD)
+ aawBreak_avgs[[4]]  <- lm( Breakdown~ scale(Turbidity), data=woodbdnoAMD)
+ aawBreak_avgs[[5]]  <- lm( Breakdown~ scale(Temp), data=woodbdnoAMD)
+ aawBreak_avgs[[6]]  <- lm( Breakdown~ scale(DIN), data=woodbdnoAMD)
 
- awBreak_avgs[[7]]  <- lm( Breakdown~ scale(Nitrate), data=woodbdnoAMD)
- awBreak_avgs[[8]]  <- lm( Breakdown~ scale(Ammonium), data=woodbdnoAMD)
- awBreak_avgs[[9]]  <- lm( Breakdown~ scale(SRP) , data=woodbdnoAMD)
- awBreak_avgs[[10]]  <- lm( Breakdown~ scale(Chloride), data=woodbdnoAMD)
+ aawBreak_avgs[[7]]  <- lm( Breakdown~ scale(Nitrate), data=woodbdnoAMD)
+ aawBreak_avgs[[8]]  <- lm( Breakdown~ scale(Ammonium), data=woodbdnoAMD)
+ aawBreak_avgs[[9]]  <- lm( Breakdown~ scale(SRP) , data=woodbdnoAMD)
+ aawBreak_avgs[[10]]  <- lm( Breakdown~ scale(Chloride), data=woodbdnoAMD)
  
-awBreak_avgs[[12]]  <- lm( Breakdown~ scale(Temp) + scale(SRP), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[13]]  <- lm( Breakdown~ scale(Temp) + scale(Nitrate), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[14]]  <- lm( Breakdown~ scale(Temp) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[15]]  <- lm( Breakdown~ scale(Temp) + scale(Chloride), data=woodbdnoAMD, REML = FALSE)
+aawBreak_avgs[[11]]  <- lm( Breakdown~ scale(Temp) + scale(SRP), data=woodbdnoAMD)
+aawBreak_avgs[[12]]  <- lm( Breakdown~ scale(Temp) + scale(Nitrate), data=woodbdnoAMD)
+aawBreak_avgs[[13]]  <- lm( Breakdown~ scale(Temp) + scale(Ammonium), data=woodbdnoAMD)
+aawBreak_avgs[[14]]  <- lm( Breakdown~ scale(Temp) + scale(Chloride), data=woodbdnoAMD)
 
-awBreak_avgs[[16]]  <- lm( Breakdown~ scale(Chloride) + scale(SRP), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[17]]  <- lm( Breakdown~ scale(Chloride) + scale(Nitrate), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[18]]  <- lm( Breakdown~ scale(Chloride) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
+aawBreak_avgs[[15]]  <- lm( Breakdown~ scale(Chloride) + scale(SRP), data=woodbdnoAMD)
+aawBreak_avgs[[16]]  <- lm( Breakdown~ scale(Chloride) + scale(Nitrate), data=woodbdnoAMD)
+aawBreak_avgs[[17]]  <- lm( Breakdown~ scale(Chloride) + scale(Ammonium), data=woodbdnoAMD)
 
-awBreak_avgs[[19]]  <- lm( Breakdown~ scale(Nitrate) + scale(SRP), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[20]]  <- lm( Breakdown~ scale(Nitrate) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[21]]  <- lm( Breakdown~ scale(SRP) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
+aawBreak_avgs[[18]]  <- lm( Breakdown~ scale(Nitrate) + scale(SRP), data=woodbdnoAMD)
+aawBreak_avgs[[19]]  <- lm( Breakdown~ scale(Nitrate) + scale(Ammonium), data=woodbdnoAMD)
+aawBreak_avgs[[20]]  <- lm( Breakdown~ scale(SRP) + scale(Ammonium), data=woodbdnoAMD)
 
-awBreak_avgs[[22]]  <- lm( Breakdown~ scale(Turbidity) + scale(H), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[23]]  <- lm( Breakdown~ scale(Turbidity) + scale(DO), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[24]]  <- lm( Breakdown~ scale(Turbidity) + scale(Temp), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[25]]  <- lm( Breakdown~ scale(Turbidity) + scale(Chloride), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[26]]  <- lm( Breakdown~ scale(Turbidity) + scale(SRP), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[27]]  <- lm( Breakdown~ scale(Turbidity) + scale(Nitrate), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[28]]  <- lm( Breakdown~ scale(Turbidity) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
+aawBreak_avgs[[21]]  <- lm( Breakdown~ scale(Turbidity) + scale(H), data=woodbdnoAMD)
+aawBreak_avgs[[22]]  <- lm( Breakdown~ scale(Turbidity) + scale(DO), data=woodbdnoAMD)
+aawBreak_avgs[[23]]  <- lm( Breakdown~ scale(Turbidity) + scale(Temp), data=woodbdnoAMD)
+aawBreak_avgs[[24]]  <- lm( Breakdown~ scale(Turbidity) + scale(Chloride), data=woodbdnoAMD)
+aawBreak_avgs[[25]]  <- lm( Breakdown~ scale(Turbidity) + scale(SRP), data=woodbdnoAMD)
+aawBreak_avgs[[26]]  <- lm( Breakdown~ scale(Turbidity) + scale(Nitrate), data=woodbdnoAMD)
+aawBreak_avgs[[27]]  <- lm( Breakdown~ scale(Turbidity) + scale(Ammonium), data=woodbdnoAMD)
 
-awBreak_avgs[[29]]  <- lm( Breakdown~ scale(DO) + scale (H), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[30]]  <- lm( Breakdown~ scale(DO) + scale(Temp), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[31]]  <- lm( Breakdown~ scale(DO) + scale(Chloride), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[32]]  <- lm( Breakdown~ scale(DO) + scale(SRP), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[33]]  <- lm( Breakdown~ scale(DO) + scale(Nitrate), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[34]]  <- lm( Breakdown~ scale(DO) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
+aawBreak_avgs[[28]]  <- lm( Breakdown~ scale(DO) + scale (H), data=woodbdnoAMD)
+aawBreak_avgs[[29]]  <- lm( Breakdown~ scale(DO) + scale(Temp), data=woodbdnoAMD)
+aawBreak_avgs[[30]]  <- lm( Breakdown~ scale(DO) + scale(Chloride), data=woodbdnoAMD)
+aawBreak_avgs[[31]]  <- lm( Breakdown~ scale(DO) + scale(SRP), data=woodbdnoAMD)
+aawBreak_avgs[[32]]  <- lm( Breakdown~ scale(DO) + scale(Nitrate), data=woodbdnoAMD)
+aawBreak_avgs[[33]]  <- lm( Breakdown~ scale(DO) + scale(Ammonium), data=woodbdnoAMD)
 
-awBreak_avgs[[35]]  <- lm( Breakdown~ scale(H) + scale(Chloride), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[36]]  <- lm( Breakdown~ scale(H) + scale(Nitrate), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[37]]  <- lm( Breakdown~ scale(H) + scale(Ammonium), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[38]]  <- lm( Breakdown~ scale(H) + scale(SRP), data=woodbdnoAMD, REML = FALSE)
-awBreak_avgs[[39]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=woodbdnoAMD, REML = FALSE)
+aawBreak_avgs[[34]]  <- lm( Breakdown~ scale(H) + scale(Chloride), data=woodbdnoAMD)
+aawBreak_avgs[[35]]  <- lm( Breakdown~ scale(H) + scale(Nitrate), data=woodbdnoAMD)
+aawBreak_avgs[[36]]  <- lm( Breakdown~ scale(H) + scale(Ammonium), data=woodbdnoAMD)
+aawBreak_avgs[[37]]  <- lm( Breakdown~ scale(H) + scale(SRP), data=woodbdnoAMD)
+aawBreak_avgs[[38]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=woodbdnoAMD)
 
  
  ## Creating a vector of names to trace back models in set
- ModnamesawBreak_avgs <- paste("model", 1:length(awBreak_avgs), sep = " ")
+ aModnamesawBreak_avgs <- paste("model", 1:length(aawBreak_avgs), sep = " ")
 
  ##generate AICc table from candidate models so that you can control the model
- aictab(cand.set = awBreak_avgs, modnames = ModnamesawBreak_avgs, sort = TRUE)
+ aictab(cand.set = aawBreak_avgs, modnames = aModnamesawBreak_avgs, sort = TRUE)
  
  
 ```
 
 ```{r}
-r.squaredGLMM(awBreak_avgs[[9]])
+summary(aawBreak_avgs[[9]])
+summary(aawBreak_avgs[[37]])
+summary(aawBreak_avgs[[10]])
+
 ```
 
 ```{r}
 confint(awBreak_avgs[[9]])
+confint(awBreak_avgs[[37]])
+confint(awBreak_avgs[[10]])
 ```
 
 ```{r}
@@ -1007,6 +1022,13 @@ aictab(cand.set = cBreak_avgs, modnames = ModnamescBreak_avgs, sort = TRUE)
 ```
 
 
+# Results for Sponge Breakdown No AMD
+Model selection based on AICc:
+
+         K   AICc Delta_AICc AICcWt Cum.Wt    LL
+model 9  3 -72.70       0.00   0.20   0.20 40.69
+model 11 4 -71.69       1.02   0.12   0.32 42.34
+model 37 4 -70.73       1.98   0.07   0.39 41.86
 
 ```{r}
 lmBreak2_avgs<-list()
@@ -1022,39 +1044,39 @@ lmBreak2_avgs<-list()
  lmBreak2_avgs[[9]]  <- lm( Breakdown~ scale(SRP) , data=spongebd)
  lmBreak2_avgs[[10]]  <- lm( Breakdown~ scale(Chloride), data=spongebd)
  
-lmBreak2_avgs[[12]]  <- lm( Breakdown~ scale(Temp) + scale(SRP), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[13]]  <- lm( Breakdown~ scale(Temp) + scale(Nitrate), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[14]]  <- lm( Breakdown~ scale(Temp) + scale(Ammonium), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[15]]  <- lm( Breakdown~ scale(Temp) + scale(Chloride), data=spongebd, REML = FALSE)
+lmBreak2_avgs[[11]]  <- lm( Breakdown~ scale(Temp) + scale(SRP), data=spongebd)
+lmBreak2_avgs[[12]]  <- lm( Breakdown~ scale(Temp) + scale(Nitrate), data=spongebd)
+lmBreak2_avgs[[13]]  <- lm( Breakdown~ scale(Temp) + scale(Ammonium), data=spongebd)
+lmBreak2_avgs[[14]]  <- lm( Breakdown~ scale(Temp) + scale(Chloride), data=spongebd)
 
-lmBreak2_avgs[[16]]  <- lm( Breakdown~ scale(Chloride) + scale(SRP), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[17]]  <- lm( Breakdown~ scale(Chloride) + scale(Nitrate), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[18]]  <- lm( Breakdown~ scale(Chloride) + scale(Ammonium), data=spongebd, REML = FALSE)
+lmBreak2_avgs[[15]]  <- lm( Breakdown~ scale(Chloride) + scale(SRP), data=spongebd)
+lmBreak2_avgs[[16]]  <- lm( Breakdown~ scale(Chloride) + scale(Nitrate), data=spongebd)
+lmBreak2_avgs[[17]]  <- lm( Breakdown~ scale(Chloride) + scale(Ammonium), data=spongebd)
 
-lmBreak2_avgs[[19]]  <- lm( Breakdown~ scale(Nitrate) + scale(SRP), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[20]]  <- lm( Breakdown~ scale(Nitrate) + scale(Ammonium), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[21]]  <- lm( Breakdown~ scale(SRP) + scale(Ammonium), data=spongebd, REML = FALSE)
+lmBreak2_avgs[[18]]  <- lm( Breakdown~ scale(Nitrate) + scale(SRP), data=spongebd)
+lmBreak2_avgs[[19]]  <- lm( Breakdown~ scale(Nitrate) + scale(Ammonium), data=spongebd)
+lmBreak2_avgs[[20]]  <- lm( Breakdown~ scale(SRP) + scale(Ammonium), data=spongebd)
 
-lmBreak2_avgs[[22]]  <- lm( Breakdown~ scale(Turbidity) + scale(H), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[23]]  <- lm( Breakdown~ scale(Turbidity) + scale(DO), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[24]]  <- lm( Breakdown~ scale(Turbidity) + scale(Temp), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[25]]  <- lm( Breakdown~ scale(Turbidity) + scale(Chloride), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[26]]  <- lm( Breakdown~ scale(Turbidity) + scale(SRP), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[27]]  <- lm( Breakdown~ scale(Turbidity) + scale(Nitrate), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[28]]  <- lm( Breakdown~ scale(Turbidity) + scale(Ammonium), data=spongebd, REML = FALSE)
+lmBreak2_avgs[[21]]  <- lm( Breakdown~ scale(Turbidity) + scale(H), data=spongebd)
+lmBreak2_avgs[[22]]  <- lm( Breakdown~ scale(Turbidity) + scale(DO), data=spongebd)
+lmBreak2_avgs[[23]]  <- lm( Breakdown~ scale(Turbidity) + scale(Temp), data=spongebd)
+lmBreak2_avgs[[24]]  <- lm( Breakdown~ scale(Turbidity) + scale(Chloride), data=spongebd)
+lmBreak2_avgs[[25]]  <- lm( Breakdown~ scale(Turbidity) + scale(SRP), data=spongebd)
+lmBreak2_avgs[[26]]  <- lm( Breakdown~ scale(Turbidity) + scale(Nitrate), data=spongebd)
+lmBreak2_avgs[[27]]  <- lm( Breakdown~ scale(Turbidity) + scale(Ammonium), data=spongebd)
 
-lmBreak2_avgs[[29]]  <- lm( Breakdown~ scale(DO) + scale (H), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[30]]  <- lm( Breakdown~ scale(DO) + scale(Temp), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[31]]  <- lm( Breakdown~ scale(DO) + scale(Chloride), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[32]]  <- lm( Breakdown~ scale(DO) + scale(SRP), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[33]]  <- lm( Breakdown~ scale(DO) + scale(Nitrate), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[34]]  <- lm( Breakdown~ scale(DO) + scale(Ammonium), data=spongebd, REML = FALSE)
+lmBreak2_avgs[[28]]  <- lm( Breakdown~ scale(DO) + scale (H), data=spongebd)
+lmBreak2_avgs[[29]]  <- lm( Breakdown~ scale(DO) + scale(Temp), data=spongebd)
+lmBreak2_avgs[[30]]  <- lm( Breakdown~ scale(DO) + scale(Chloride), data=spongebd)
+lmBreak2_avgs[[31]]  <- lm( Breakdown~ scale(DO) + scale(SRP), data=spongebd)
+lmBreak2_avgs[[32]]  <- lm( Breakdown~ scale(DO) + scale(Nitrate), data=spongebd)
+lmBreak2_avgs[[33]]  <- lm( Breakdown~ scale(DO) + scale(Ammonium), data=spongebd)
 
-lmBreak2_avgs[[35]]  <- lm( Breakdown~ scale(H) + scale(Chloride), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[36]]  <- lm( Breakdown~ scale(H) + scale(Nitrate), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[37]]  <- lm( Breakdown~ scale(H) + scale(Ammonium), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[38]]  <- lm( Breakdown~ scale(H) + scale(SRP), data=spongebd, REML = FALSE)
-lmBreak2_avgs[[39]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=spongebd, REML = FALSE)
+lmBreak2_avgs[[34]]  <- lm( Breakdown~ scale(H) + scale(Chloride), data=spongebd)
+lmBreak2_avgs[[35]]  <- lm( Breakdown~ scale(H) + scale(Nitrate), data=spongebd)
+lmBreak2_avgs[[36]]  <- lm( Breakdown~ scale(H) + scale(Ammonium), data=spongebd)
+lmBreak2_avgs[[37]]  <- lm( Breakdown~ scale(H) + scale(SRP), data=spongebd)
+lmBreak2_avgs[[38]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=spongebd)
 
  ## Creating a vector of names to trace back models in set
  ModnameslmBreak2_avgs <- paste("model", 1:length(lmBreak2_avgs), sep = " ")
@@ -1064,9 +1086,27 @@ lmBreak2_avgs[[39]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=spongebd, RE
 ```
 
 
+```{r}
+summary(lmBreak2_avgs[[9]])
+summary(lmBreak2_avgs[11])
+summary(lmBreak2_avgs[[37]])
+```
+
+```{r}
+confint(lmBreak2_avgs[[9]])
+confint(lmBreak2_avgs[[11]])
+confint(lmBreak2_avgs[[37]])
+
+```
 
 
 
+
+
+
+
+####################
+## Breakdown on Wood all sites
 
 
 wood
