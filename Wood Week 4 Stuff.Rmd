@@ -1,0 +1,253 @@
+---
+title: "Wood week 4 stuff"
+output: html_document
+---
+```{r}
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICcmodavg)
+library(scatterplot3d)
+library(cowplot)
+library(MuMIn)
+library(usdm)
+```
+
+```{r}
+microdf <- read.csv("Emily Data.csv")
+microdfa <- read.csv("Emily Data.csv")
+
+microdf<-microdfa[-c(103,243,319,346, 348, 365), ]
+
+woodweek4 <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==4)
+
+
+
+micronoamdCS<-microdf[-c(65:126, 224:253),]
+
+woodnoamdCSweek4 <- subset(micronoamdCS, Substrate=="Wood Veneer" & Week.Removed==4)
+```
+
+## Wood 4 respiration all sites
+
+Model selection based on AICc:
+
+         K    AICc Delta_AICc AICcWt Cum.Wt    LL
+model 19 5 -147.51       0.00   0.26   0.26 79.66
+model 20 5 -147.00       0.51   0.20   0.46 79.41
+model 8  4 -145.66       1.85   0.10   0.56 77.42
+model 36 5 -144.26       3.25   0.05   0.61 78.04
+model 37 5 -143.62       3.88   0.04   0.65 77.72
+
+```{r}
+w4Resp4.models<-list()
+w4Resp4.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=woodweek4, REML = FALSE)
+
+w4Resp4.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[38]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=woodweek4, REML = FALSE)
+w4Resp4.models[[39]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=woodweek4, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+wModnamesw4Resp4 <- paste("model", 1:length(w4Resp4.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = w4Resp4.models, modnames = wModnamesw4Resp4, sort = TRUE)
+
+```
+           
+  Results: 
+           R2m       R2c
+[19] 0.3835049 0.5205291
+           R2m       R2c
+[20] 0.3715095 0.5203802
+           R2m       R2c
+[8] 0.2587294 0.5189801
+           R2m       R2c
+[36] 0.2977056 0.5194638
+           R2m       R2c
+[37] 0.2781493 0.5192218
+```{r}
+r.squaredGLMM(w4Resp4.models[[19]])
+r.squaredGLMM(w4Resp4.models[[20]])
+r.squaredGLMM(w4Resp4.models[[8]])
+r.squaredGLMM(w4Resp4.models[[36]])
+r.squaredGLMM(w4Resp4.models[[37]])
+```
+
+                      2.5 %       97.5 %
+.sig01          0.000000000  0.030630064
+.sigma          0.022059386  0.038158264
+(Intercept)     0.113990437  0.140106296
+scale(Nitrate) -0.035165943 -0.008627075
+scale(SRP)      0.001261925  0.027800793
+
+                       2.5 %       97.5 %
+.sig01           0.0000000000  0.031392756
+.sigma           0.0220593862  0.038165748
+(Intercept)      0.1137334267  0.140363307
+scale(Nitrate)  -0.0375878856 -0.009968557
+scale(Ammonium)  0.0002882893  0.027907618
+
+```{r}
+confint(w4Resp4.models[[19]])
+confint(w4Resp4.models[[20]])
+confint(w4Resp4.models[[8]])
+confint(w4Resp4.models[[36]])
+confint(w4Resp4.models[[37]])
+```
+
+
+
+## Wood week 4 respiration no AMD
+
+Model selection based on AICc:
+
+         K    AICc Delta_AICc AICcWt Cum.Wt    LL
+model 4  4 -112.47       0.00   0.14   0.14 61.03
+model 29 5 -112.30       0.17   0.13   0.27 62.40
+model 34 5 -112.05       0.42   0.11   0.38 62.28
+model 33 5 -111.27       1.20   0.08   0.46 61.89
+model 30 5 -110.41       2.06   0.05   0.51 61.46
+
+
+so this is better than our week 6 model the null is not the top model here DO is and the next models under the top all have an indluence of DO too
+
+```{r}
+aw4Resp5.models<-list()
+aw4Resp5.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+aw4Resp5.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[38]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+aw4Resp5.models[[39]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=woodnoamdCSweek4, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+wModnamesaw4Resp5 <- paste("model", 1:length(aw4Resp5.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = aw4Resp5.models, modnames = wModnamesaw4Resp5, sort = TRUE)
+```
+
+Results:
+           R2m      R2c
+[4] 0.2519603 0.296162
+           R2m       R2c
+[29] 0.3208826 0.3208826
+           R2m       R2c
+[34] 0.3151926 0.3151926
+           R2m       R2c
+[33] 0.2966426 0.2972416
+           R2m      R2c
+[30] 0.2750768 0.296709
+
+```{r}
+r.squaredGLMM(aw4Resp5.models[[4]])
+r.squaredGLMM(aw4Resp5.models[[29]])
+r.squaredGLMM(aw4Resp5.models[[34]])
+r.squaredGLMM(aw4Resp5.models[[33]])
+r.squaredGLMM(aw4Resp5.models[[30]])
+```
+
+                2.5 %     97.5 %
+.sig01      0.000000000 0.02724837
+.sigma      0.023211305 0.04160996
+(Intercept) 0.115064966 0.14154667
+scale(DO)   0.004925056 0.03185947
+
+                2.5 %     97.5 %
+.sig01       0.000000000 0.02232705
+.sigma       0.023184238 0.03985100
+(Intercept)  0.116709831 0.13990180
+scale(DO)    0.006510669 0.03010007
+scale(H)    -0.002123022 0.02146638
+```{r}
+confint(aw4Resp5.models[[4]])
+confint(aw4Resp5.models[[29]])
+confint(aw4Resp5.models[[34]])
+confint(aw4Resp5.models[[33]])
+confint(aw4Resp5.models[[30]])
+```
+
+
+
