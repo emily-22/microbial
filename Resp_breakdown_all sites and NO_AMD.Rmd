@@ -25,6 +25,7 @@ wooddf <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==6)
 
 Instead of using this new CSV, I'm going to just make a new matrix that is based on microdf but with the AMD and CS in it
 
+No AMD sites
 ```{r}
 micronoamdCS<-microdf[-c(65:126, 224:253),]
 
@@ -207,6 +208,26 @@ Conclusion for Sponge Models:
 The only model that had much support was H + Chloride and we have a nice mR2 value, indicating that we were able to explain 62% of the variation in the data with this model. 
 If you plot choloride and H .. plot (Chloride~H, data=spongedf) .. you can see that we have this one really low pH Site (high H) with a big difference between it and the other Sites, AND it is our really high chloride Site. 
 
+
+## Sponge Averages
+tapply(X, INDEX, FUN = NULL)
+```{r}
+mean.resp.sponge<-tapply(spongedf$RespRateInd, spongedf$Site, mean)
+mean.break.sponge<-tapply(spongedf$Breakdown, spongedf$Site, mean)
+
+summary(lm(mean.break.sponge~mean.resp.sponge))
+
+plot(mean.break.sponge~mean.resp.sponge)
+abline(lm((mean.break.sponge~mean.resp.sponge), lwd="dashed"))
+```
+
+
+
+
+
+
+
+
 ```{r}
 plot(RespRateInd~H, data=spongedf)
 plot(RespRateInd~Chloride, data=spongedf)
@@ -348,6 +369,9 @@ confint(wResp2.models[[3]])
 
 
 
+
+
+############################################################################################
 ## No AMD below here
 ###############################
 ###############################
@@ -517,6 +541,17 @@ Chloride alone becomes the top model when removing the amd Sites, accounting for
 
 
 
+
+
+
+
+
+
+
+
+
+
+#############################################################################################
 
 ##Wood Respiration no AMD
 
@@ -821,6 +856,9 @@ plot(Breakdown~RespRateAvg, data=spongebd)
  plot(RespRateAvg~SRP, data=woodbd)
  plot(RespRateAvg~Developed..High.Intensity, data=woodbd)
 ```
+
+
+
 
 
 

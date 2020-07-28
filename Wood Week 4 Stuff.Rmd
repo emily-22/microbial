@@ -250,4 +250,12 @@ confint(aw4Resp5.models[[30]])
 ```
 
 
+## Week Four breakdown
+Ok  - I think we are getting a better story out of the week 4 breakdown, so I think we should run with this. It is also a nice comparison since both sponge and wood are now on the same time frame. 
+
+You'll need to recalculate breakdown rate using the week 4 data and then we'll use the same subset of models to see what the best predictors are. 
+
+# Plot Week 4 wood No AMD
+plot(RespRateInd ~ DO, data = woodnoamdCSweek4)
+plot(RespRateInd ~ pH, data = woodnoamdCSweek4)
 
