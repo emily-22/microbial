@@ -200,6 +200,12 @@ scale(Chloride)  1.1044317  2.3789479
 confint(bResp2.models[[35]])
 confint(bResp2.models[[17]])
 confint(bResp2.models[[11]])
+
+summary(bResp2.models[[35]])
+
+plot(spongedf$H ~ spongedf$Chloride)
+plot(spongedf$RespRateInd ~ spongedf$Chloride)
+plot(spongedf$RespRateInd ~ spongedf$H)
 ```
 
 
@@ -210,22 +216,22 @@ If you plot choloride and H .. plot (Chloride~H, data=spongedf) .. you can see t
 
 
 ## Sponge Averages
-tapply(X, INDEX, FUN = NULL)
+ tapply(X, INDEX, FUN = NULL)
+ 
 ```{r}
-mean.resp.sponge<-tapply(spongedf$RespRateInd, spongedf$Site, mean)
-mean.break.sponge<-tapply(spongedf$Breakdown, spongedf$Site, mean)
+ mean.resp.sponge<-tapply(spongedf$RespRateInd, spongedf$Site, mean)
+ mean.break.sponge<-tapply(spongedf$Breakdown, spongedf$Site, mean)
+ mean.resp.wood<-tapply(wooddf$RespRateInd, wooddf$Site, mean)
+ mean.resp.sponge
+ mean.resp.wood
+ summary(lm(mean.break.sponge~mean.resp.sponge))
 
-summary(lm(mean.break.sponge~mean.resp.sponge))
-
-plot(mean.break.sponge~mean.resp.sponge)
-abline(lm((mean.break.sponge~mean.resp.sponge), lwd="dashed"))
+ plot(mean.break.sponge~mean.resp.sponge)
+ abline(lm((mean.break.sponge~mean.resp.sponge), lwd="dashed"))
 ```
 
 
-
-
-
-
+ 
 
 
 ```{r}
@@ -277,17 +283,13 @@ wResp2.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | S
 wResp2.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=wooddf, REML = FALSE)
 
-
 wResp2.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
 
-
 wResp2.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
-
-
 
 wResp2.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=wooddf, REML = FALSE)
@@ -303,7 +305,6 @@ wResp2.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Sit
 wResp2.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
-
 
 wResp2.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
 wResp2.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
@@ -365,13 +366,16 @@ Here we see a decrease in respration with increaing H+ (decreasing pH) and that 
 confint(wResp2.models[[37]])
 confint(wResp2.models[[18]])
 confint(wResp2.models[[3]])
+
+summary(wResp2.models[[37]])
+
+plot(wooddf$H ~ wooddf$Ammonium)
+plot(wooddf$RespRateInd ~ wooddf$Ammonium)
+plot(wooddf$RespRateInd ~ wooddf$H)
 ```
 
 
 
-
-
-############################################################################################
 ## No AMD below here
 ###############################
 ###############################
@@ -541,17 +545,6 @@ Chloride alone becomes the top model when removing the amd Sites, accounting for
 
 
 
-
-
-
-
-
-
-
-
-
-
-#############################################################################################
 
 ##Wood Respiration no AMD
 
@@ -761,6 +754,13 @@ confint(lmBreak2_avgs[[4]])
 confint(lmBreak2_avgs[[2]])
 ```
 
+```{r}
+plot(spongebd$Breakdown ~ spongebd$SRP)
+plot(spongebd$SRP ~ spongebd$Temp)
+plot(spongebd$SRP ~ spongebd$H)
+plot(spongebd$Breakdown ~ spongebd$Temp)
+plot(spongebd$Breakdown ~ spongebd$H)
+```
 
 
 
@@ -845,6 +845,10 @@ confint(awBreak3_avgs[[27]])
 confint(awBreak3_avgs[[6]])
 confint(awBreak3_avgs[[4]])
 confint(awBreak3_avgs[[8]])
+
+plot(woodbd$Turbidity ~ woodbd$SRP)
+plot(woodbd$Breakdown ~ woodbd$SRP)
+plot(woodbd$Breakdown ~ woodbd$Turbidity)
 ```
 
 ```{r}
@@ -856,9 +860,6 @@ plot(Breakdown~RespRateAvg, data=spongebd)
  plot(RespRateAvg~SRP, data=woodbd)
  plot(RespRateAvg~Developed..High.Intensity, data=woodbd)
 ```
-
-
-
 
 
 
@@ -1054,4 +1055,88 @@ plot(Breakdown~RespRateAvg, data=spongebdnoAMD)
  plot(RespRateAvg~SRP, data=woodbdnoAMD)
  plot(RespRateAvg~Developed..High.Intensity, data=woodbdnoAMD)
 ```
+
+
+
+
+
+
+
+####################################
+####################################
+## O2 to carbon and breakdown
+####################################
+####################################
+
+
+#Sponge
+```{r}
+mean.resp.sponge<-tapply(spongedf$RespRateInd, spongedf$Site, mean)
+mean.break.sponge<-tapply(spongedf$Breakdown, spongedf$Site, mean)
+
+summary(lm(mean.break.sponge~mean.resp.sponge))
+
+plot(( mean.break.sponge)~(mean.resp.sponge))
+abline(lm((mean.break.sponge~mean.resp.sponge), lwd="dashed"))
+
+
+# Convert to C
+Csresp<-mean.resp.sponge*.85/24
+Csbreak<-mean.break.sponge*.30
+
+plot(Csbreak~Csresp)
+abline(lm(Csbreak~Csresp))
+summary(lm(Csbreak~Csresp))
+```
+
+
+
+#Wood
+```{r}
+mean.resp.wood<-tapply(wooddf$RespRateInd, wooddf$Site, mean)
+mean.break.wood<-tapply(wooddf$Breakdown, wooddf$Site, mean)
+
+summary(lm(mean.break.wood~mean.resp.wood))
+
+plot(( mean.break.wood)~(mean.resp.wood))
+abline(lm((mean.break.wood~mean.resp.wood), lwd="dashed"))
+
+
+# Convert to C
+Cwresp<-mean.resp.wood*.85/24
+Cwbreak<-mean.break.wood*.45
+
+plot(Cwbreak~Cwresp)
+abline(lm(Cwbreak~Cwresp))
+summary(lm(Cwbreak~Cwresp))
+```
+
+
+
+
+#### Plots
+```{r}
+plot(RespRateInd~Chloride, data=spongedf)
+abline(lm(RespRateInd~Chloride, data=spongedf))
+points(RespRateInd~Chloride, data=wooddf, pch=16)
+abline(lm(RespRateInd~Chloride, data=wooddf))
+
+plot(RespRateInd~SRP, data=spongedf)
+abline(lm(RespRateInd~SRP, data=spongedf))
+points(RespRateInd~SRP, data=wooddf, pch=16)
+abline(lm(RespRateInd~SRP, data=wooddf))
+
+plot(RespRateAvg~Breakdown, data=spongedf)
+abline(lm(RespRateAvg~Breakdown, data=spongedf))
+
+plot(RespRateAvg~Breakdown, data=wooddf)
+abline(lm(RespRateAvg~Breakdown, data=wooddf))
+```
+
+
+
+
+
+
+
 
