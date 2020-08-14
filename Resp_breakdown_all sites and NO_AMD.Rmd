@@ -19,7 +19,8 @@ microdf<-microdfa[-c(103,243,319,346, 348, 365), ]
 
 
 spongedf <- subset(microdf, Substrate=="Cellulose Sponge" & Week.Removed==4)
-wooddf <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==6)
+wooddf4 <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==4)
+wooddf6 <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==6)
 
 ```
 
@@ -221,7 +222,7 @@ If you plot choloride and H .. plot (Chloride~H, data=spongedf) .. you can see t
 ```{r}
  mean.resp.sponge<-tapply(spongedf$RespRateInd, spongedf$Site, mean)
  mean.break.sponge<-tapply(spongedf$Breakdown, spongedf$Site, mean)
- mean.resp.wood<-tapply(wooddf$RespRateInd, wooddf$Site, mean)
+ mean.resp.wood<-tapply(wooddf6$RespRateInd, wooddf6$Site, mean)
  mean.resp.sponge
  mean.resp.wood
  summary(lm(mean.break.sponge~mean.resp.sponge))
@@ -265,52 +266,52 @@ model 3  4 -147.65       4.37   0.05   0.68 78.43
 #
 ```{r}
 wResp2.models<-list()
-wResp2.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[13]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[14]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[15]]  <- lmer( RespRateInd~ scale(Temp) + scale(Chloride) + (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[16]]  <- lmer( RespRateInd~ scale(Chloride) + scale(SRP) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[17]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Nitrate) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[18]]  <- lmer( RespRateInd~ scale(Chloride) + scale(Ammonium) + (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[19]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[20]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[21]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[22]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(H)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[23]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(DO)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[24]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Temp)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[25]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Chloride)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[26]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(SRP)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[27]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Nitrate)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[28]]  <- lmer( RespRateInd~ scale(Turbidity) + scale(Ammonium)+ (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[29]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[30]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[31]]  <- lmer( RespRateInd~ scale(DO) + scale(Chloride)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[32]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[33]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[34]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=wooddf6, REML = FALSE)
 
-wResp2.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[38]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=wooddf, REML = FALSE)
-wResp2.models[[39]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=wooddf, REML = FALSE)
+wResp2.models[[35]]  <- lmer( RespRateInd~ scale(H) + scale(Chloride)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[36]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[37]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[38]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=wooddf6, REML = FALSE)
+wResp2.models[[39]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=wooddf6, REML = FALSE)
 
 
 
@@ -369,9 +370,9 @@ confint(wResp2.models[[3]])
 
 summary(wResp2.models[[37]])
 
-plot(wooddf$H ~ wooddf$Ammonium)
-plot(wooddf$RespRateInd ~ wooddf$Ammonium)
-plot(wooddf$RespRateInd ~ wooddf$H)
+plot(wooddf6$H ~ wooddf6$Ammonium)
+plot(wooddf6$RespRateInd ~ wooddf6$Ammonium)
+plot(wooddf6$RespRateInd ~ wooddf6$H)
 ```
 
 
@@ -1093,8 +1094,8 @@ summary(lm(Csbreak~Csresp))
 
 #Wood
 ```{r}
-mean.resp.wood<-tapply(wooddf$RespRateInd, wooddf$Site, mean)
-mean.break.wood<-tapply(wooddf$Breakdown, wooddf$Site, mean)
+mean.resp.wood<-tapply(wooddf6$RespRateInd, wooddf6$Site, mean)
+mean.break.wood<-tapply(wooddf6$Breakdown, wooddf6$Site, mean)
 
 summary(lm(mean.break.wood~mean.resp.wood))
 
@@ -1114,24 +1115,151 @@ summary(lm(Cwbreak~Cwresp))
 
 
 
+#For Sponge resp C vs breakdown C
+```{r}
+# Convert to gC per day
+resp_O_day<-spongedf$RespRateInd *  24 * spongedf$Post.AFDM
+g_carbon_resp<-((resp_O_day* .85*(12/32)) /1000) # changes mg.O to g.C, by efficiency 0.85 * molar conversion and mg to g conversion. 
+
+C_lost_day<-((spongedf$Pre.Dry.Weight) - ( spongedf$Post.Dry.Weight )*.3 )/ (spongedf$Days.in.Stream)
+
+summary(lm(C_lost_day~g_carbon_resp))
+plot(C_lost_day~g_carbon_resp)
+abline((lm(C_lost_day~g_carbon_resp)))
+abline(a=0,b=1)
+
+plot(g_carbon_resp~spongedf$Chloride)
+
+# convert to gC per G AFDM per day # this code is not yet correct 08/14/2020
+resp_O_AFDM_day<-spongedf$RespRateInd *  24
+g_carbon_AFDM_resp<-((resp_O_AFDM_day* .85*(12/32)) /1000)
+
+lost_AFDM_day<-((spongedf$Pre.AFDM ) - ( spongedf$Post.AFDM) )/ (spongedf$Days.in.Stream)
+
+plot(lost_AFDM_day~g_carbon_AFDM_resp)
+abline(lm(lost_AFDM_day~g_carbon_AFDM_resp))
+summary(lm(lost_AFDM_day~g_carbon_AFDM_resp))
+```
+
+#For Wood resp C vs breakdown C
+```{r}
+# Convert to gC per day
+Wresp_O_day<-wooddf4$RespRateInd *  24 * wooddf4$Post.AFDM
+Wg_carbon_resp<-((Wresp_O_day* .85*(12/32)) /1000)
+
+WC_lost_day<-((wooddf4$Pre.Dry.Weight * 0.45 ) - ( wooddf4$Post.Dry.Weight * 0.45) )/ (wooddf4$Days.in.Stream)
+
+#Wood at week 6
+W6resp_O_day<-wooddf6$RespRateInd *  24 * wooddf6$Post.AFDM
+W6g_carbon_resp<-((W6resp_O_day* .85*(12/32)) /1000)
+
+W6C_lost_day<-((wooddf6$Pre.Dry.Weight * 0.45 ) - ( wooddf6$Post.Dry.Weight * 0.45) )/ (wooddf6$Days.in.Stream)
+
+plot(WC_lost_day~Wg_carbon_resp, xlim=c(0,.005), ylim=c(-0.002,0.013), pch=19)
+#points(W6C_lost_day~W6g_carbon_resp, pch=2)
+points(C_lost_day~g_carbon_resp)
+#abline((lm(C_lost_day~g_carbon_resp)))
+abline(a=0,b=1)
+
+# convert to gC per G AFDM per day
+Wresp_O_AFDM_day<-wooddf4$RespRateInd *  24
+Wg_carbon_AFDM_resp<-((Wresp_O_AFDM_day* .85*(12/32)) /1000)
+
+W_lost_AFDM_day<-((wooddf4$Pre.AFDM ) - ( wooddf4$Post.AFDM) )/ (wooddf4$Days.in.Stream)
+
+plot(W_lost_AFDM_day~Wg_carbon_AFDM_resp, pch=19, xlim=c(0,.06), ylim=c(-0.01, 0.01))
+points(lost_AFDM_day~g_carbon_AFDM_resp)
+#abline(lm(W_lost_AFDM_day~Wg_carbon_AFDM_resp))
+abline(a=0,b=1)
+summary(lm(W_lost_AFDM_day~Wg_carbon_AFDM_resp))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 #### Plots
 ```{r}
 plot(RespRateInd~Chloride, data=spongedf)
 abline(lm(RespRateInd~Chloride, data=spongedf))
-points(RespRateInd~Chloride, data=wooddf, pch=16)
-abline(lm(RespRateInd~Chloride, data=wooddf))
+points(RespRateInd~Chloride, data=wooddf6, pch=16)
+abline(lm(RespRateInd~Chloride, data=wooddf6))
 
 plot(RespRateInd~SRP, data=spongedf)
 abline(lm(RespRateInd~SRP, data=spongedf))
-points(RespRateInd~SRP, data=wooddf, pch=16)
-abline(lm(RespRateInd~SRP, data=wooddf))
+points(RespRateInd~SRP, data=wooddf6, pch=16)
+abline(lm(RespRateInd~SRP, data=wooddf6))
 
 plot(RespRateAvg~Breakdown, data=spongedf)
 abline(lm(RespRateAvg~Breakdown, data=spongedf))
 
-plot(RespRateAvg~Breakdown, data=wooddf)
-abline(lm(RespRateAvg~Breakdown, data=wooddf))
+plot(RespRateAvg~Breakdown, data=wooddf6)
+abline(lm(RespRateAvg~Breakdown, data=wooddf6))
 ```
+
+
+mean in ggplot with error bars for resp and breakdown
+
+
+
+```{r}
+graphs <- read.csv("for graphs fig 1.csv")
+
+substrate <- levels(graphs$Substrate)
+mean <- NULL
+SE <- NULL
+for(i in substrate){
+  # This will calculate a mean for each subset (site)
+  mean[[i]] <- mean(subset(graphs, Site == i)$RespRateInd)
+  # This will calculate a standard error for each subset (site)
+  SE[[i]] <- sd(subset(graphs, Site == i)$RespRateInd) /
+    sqrt(as.numeric(length(substrate)))
+}
+
+Graph <- data.frame(Substrate = substrate, 
+                       RespRateInd = mean,
+                       RespRateSE = SE)
+
+ggplot(data = Graph, aes(x = Chloride, y = RespRateInd, fill = Substrate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = RespRateInd - RespRateSE,
+                    ymax = RespRateInd + RespRateSE))
+
+```
+
+
+
+
+```{r}
+
+microplot <- read.csv("fig 1 graph.csv")
+ 
+ggplot(data = microplot, aes(x = Chloride, y = RespRateInd, col = Substrate)) +
+  geom_point() +
+  geom_errorbar( aes(ymin = RespRateInd-sd, ymax = +sd))
+
+plot()
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
