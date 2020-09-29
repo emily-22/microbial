@@ -1,0 +1,210 @@
+---
+title: "Land Use - Microbial"
+author: "Emily Huff and James Wood"
+date: "9/22/2020"
+output: html_document
+---
+
+```{r}
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICcmodavg)
+library(scatterplot3d)
+library(cowplot)
+library(MuMIn)
+library(usdm)
+```
+
+
+```{r}
+microdf <- read.csv("Emily Data.csv")
+microdfa <- read.csv("Emily Data.csv")
+
+# this removed a big outlier data point (365) - a respiraton measurement of 8 (woodsdale creek) when rest were ~1 or 2. Will need to recalculate Site average if used. Also removed  (319) which had a resp about double the others at the Site. 
+microdf<-microdfa[-c(103,243,319,346, 348, 365), ]
+
+
+spongedf <- subset(microdf, Substrate=="Cellulose Sponge" & Week.Removed==4)
+wooddf4 <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==4)
+wooddf6 <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==6)
+```
+
+
+##Sponge Respiration Land Use
+Model selection based on AICc:
+
+         K   AICc Delta_AICc AICcWt Cum.Wt     LL
+model 11 4 131.37       0.00   0.14   0.14 -61.24
+model 15 5 132.51       1.14   0.08   0.21 -60.57
+model 1  3 132.87       1.50   0.06   0.28 -63.17
+model 9  4 133.44       2.07   0.05   0.32 -62.27
+model 35 5 133.57       2.20   0.05   0.37 -61.10
+
+```{r}
+CClanduse.models<-list()
+Clanduse.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[12]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[13]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[14]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + (1 | Site), data=spongedf, REML = FALSE)
+
+Clanduse.models[[15]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Chloride) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[16]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Conductivity) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[17]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(H) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[18]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Temp) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[19]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Turbidity) +(1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[20]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(DO) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[21]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[22]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[23]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(DIN) +(1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[24]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+
+Clanduse.models[[25]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Chloride) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[26]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Conductivity) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[27]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(H) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[28]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Temp) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[29]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Turbidity) +(1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[30]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(DO) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[31]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[32]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[33]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(DIN) +(1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[34]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+
+Clanduse.models[[35]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Chloride) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[36]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Conductivity) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[37]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(H) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[38]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Temp) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[39]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Turbidity) +(1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[40]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(DO) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[41]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Nitrate) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[42]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Ammonium) + (1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[43]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(DIN) +(1 | Site), data=spongedf, REML = FALSE)
+Clanduse.models[[44]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(SRP) + (1 | Site), data=spongedf, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+bModnamesClanduse <- paste("model", 1:length(Clanduse.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Clanduse.models, modnames = bModnamesClanduse, sort = TRUE)
+```
+
+
+```{r}
+r.squaredGLMM(Clanduse.models[[11]])
+r.squaredGLMM(Clanduse.models[[15]])
+r.squaredGLMM(Clanduse.models[[1]])
+r.squaredGLMM(Clanduse.models[[9]])
+```
+
+
+```{r}
+confint(Clanduse.models[[11]])
+confint(Clanduse.models[[15]])
+```
+
+
+
+
+
+
+
+
+
+
+##################################
+##Wood w4 Respiration land use
+
+Model selection based on AICc:
+
+         K    AICc Delta_AICc AICcWt Cum.Wt    LL
+model 31 5 -154.30       0.00   0.53   0.53 83.06
+model 41 5 -153.84       0.46   0.42   0.95 82.83
+model 21 5 -146.78       7.52   0.01   0.96 79.30
+model 8  4 -145.66       8.64   0.01   0.97 77.42
+model 43 5 -145.31       8.99   0.01   0.98 78.57
+
+```{r}
+Wlanduse.models<-list()
+Wlanduse.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[5]]  <- lmer( RespRateInd~ scale(Turbidity) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[6]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[7]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[8]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[9]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[10]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[11]]  <- lmer( RespRateInd~ scale(Chloride) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[12]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[13]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[14]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + (1 | Site), data=wooddf4, REML = FALSE)
+
+Wlanduse.models[[15]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Chloride) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[16]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Conductivity) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[17]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(H) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[18]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Temp) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[19]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Turbidity) +(1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[20]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(DO) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[21]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Nitrate) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[22]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(Ammonium) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[23]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(DIN) +(1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[24]]  <- lmer( RespRateInd~ scale(Developed..Low.Intensity) + scale(SRP) + (1 | Site), data=wooddf4, REML = FALSE)
+
+Wlanduse.models[[25]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Chloride) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[26]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Conductivity) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[27]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(H) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[28]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Temp) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[29]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Turbidity) +(1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[30]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(DO) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[31]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Nitrate) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[32]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(Ammonium) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[33]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(DIN) +(1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[34]]  <- lmer( RespRateInd~ scale(Developed..Medium.Inensity.) + scale(SRP) + (1 | Site), data=wooddf4, REML = FALSE)
+
+Wlanduse.models[[35]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Chloride) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[36]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Conductivity) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[37]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(H) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[38]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Temp) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[39]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Turbidity) +(1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[40]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(DO) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[41]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Nitrate) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[42]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(Ammonium) + (1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[43]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(DIN) +(1 | Site), data=wooddf4, REML = FALSE)
+Wlanduse.models[[44]]  <- lmer( RespRateInd~ scale(Developed..High.Intensity) + scale(SRP) + (1 | Site), data=wooddf4, REML = FALSE)
+
+## Creating a vector of names to trace back models in set
+bModnamesWlanduse <- paste("model", 1:length(Wlanduse.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Wlanduse.models, modnames = bModnamesWlanduse, sort = TRUE)
+```
+
+
+
+```{r}
+r.squaredGLMM(Wlanduse.models[[31]])
+r.squaredGLMM(Wlanduse.models[[41]])
+r.squaredGLMM(Wlanduse.models[[21]])
+r.squaredGLMM(Wlanduse.models[[8]])
+```
+
+
+```{r}
+confint(Wlanduse.models[[31]])
+confint(Wlanduse.models[[41]])
+```
+
+
+
+
