@@ -46,7 +46,6 @@ ggplot(waterchem2,aes(x = Date ,y = Conductivity, colour = Site, group = Site)) 
 ##but this is the gist of how i did the time series
 
 
-
 ggplot(waterchem2,aes(x = Water.Temp ,y = Conductivity, colour = Site, group = Site)) + 
   geom_point() +
   theme_classic() +
@@ -57,7 +56,12 @@ ggplot(waterchem2,aes(x = Chloride ,y = Conductivity, colour = Site, group = Sit
   theme_classic() +
   labs(y = "Conductivity ms/cm", x = "Chloride")
 
-########################################
-########################################
-########################################
+################################################################################
+#using julian day
+
+
+ggplot(waterchem2,aes(x = Julian.Day ,y = Conductivity, colour = Site, group = Site)) + 
+  geom_line() +
+  theme_classic() +
+  labs(y = "Conductivity ms/cm", x = "Julian Day")
 
