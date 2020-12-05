@@ -41,10 +41,6 @@ ggplot(waterchem2,aes(x = Date ,y = Conductivity, colour = Site, group = Site)) 
   theme(axis.text.x = element_text(angle = 90)) +
   theme(axis.text.x = element_text(size=5)) +
   labs(y = "Conductivity ms/cm", x = "Date")
-##somethings messed up in the sheet that i need to fix
-##at the end of the graph where the dates should end there is N/A so it messes it up
-##but this is the gist of how i did the time series
-
 
 ggplot(waterchem2,aes(x = Water.Temp ,y = Conductivity, colour = Site, group = Site)) + 
   geom_point() +
@@ -64,4 +60,64 @@ ggplot(waterchem2,aes(x = Julian.Day ,y = Conductivity, colour = Site, group = S
   geom_line() +
   theme_classic() +
   labs(y = "Conductivity ms/cm", x = "Julian Day")
+
+##Wheeling Creek and tribs
+WeCr <- read.csv("WeCr.csv")
+
+ggplot(WeCr,aes(x = Julian.Day ,y = Conductivity, colour = Site, group = Site)) + 
+  geom_line() +
+  theme_classic() +
+  labs(y = "Conductivity ms/cm", x = "Julian Day")
+
+
+##North fork and short creek
+NfSh <- read.csv("NfSh.csv")
+
+ggplot(NfSh,aes(x = Julian.Day ,y = Conductivity, colour = Site, group = Site)) + 
+  geom_line() +
+  theme_classic() +
+  labs(y = "Conductivity ms/cm", x = "Julian Day")
+
+##Buffalo creek
+BfCr <- read.csv("BfCr.csv")
+
+ggplot(BfCr,aes(x = Julian.Day ,y = Conductivity, colour = Site, group = Site)) + 
+  geom_line() +
+  theme_classic() +
+  labs(y = "Conductivity ms/cm", x = "Julian Day")
+
+##AMD sites
+AMDs <- read.csv("AMDs.csv")
+
+ggplot(AMDs,aes(x = Julian.Day ,y = Conductivity, colour = Site, group = Site)) + 
+  geom_line() +
+  theme_classic() +
+  labs(y = "Conductivity ms/cm", x = "Julian Day")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
