@@ -1,0 +1,11 @@
+﻿Predictor_Variables,number,LCI,UCI,Estimate_Effects,std_error
+scale(DO),1,-0.445,0.132,-0.1563,0.1444
+scale(Temp),2,-0.414,1.057,0.3222,0.3682
+scale(Turbidity),3,-0.552,0.174,-0.1889,0.1816
+scale(Chloride),4,2.153,3.746,2.95,0.3986
+scale(pH),5,-1.718,-0.241,-0.98,0.3695
+scale(SRP),6,-0.169,0.6,0.2156,0.1924
+scale(DIN),7,1073.646,9067.916,5071,2000
+scale(Conductivity),8,-2.711,0.938,-0.8862,0.9132
+scale(Nitrate),9,-2472.637,-293.091,-1383,545.4
+scale(Ammonium),10,-8213.096,-972.623,-4593,1812
