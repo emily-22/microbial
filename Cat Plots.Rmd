@@ -28,6 +28,7 @@ library(scatterplot3d)
 library(cowplot)
 library(MuMIn)
 library(usdm)
+library(lmerTest) # adds p values to LMER liner modles
 ```
 
 
@@ -56,11 +57,11 @@ CResp01$Predictor_Variables<-factor(CResp01$Predictor_Variables,
                                        levels=CResp01$Predictor_Variables[order((CResp01$Estimate_Effects),
                                                                                    decreasing=TRUE)])
 
-CResp01.plot<-ggplot(data=CResp01,aes(x=Estimate_Effects,y=Predictor_Variables))+
+CResp01.plot_a<-ggplot(data=CResp01,aes(x=Estimate_Effects,y=Predictor_Variables))+
   geom_point(shape=1, size =5)+
   geom_errorbarh(aes(xmin=LCI,xmax=UCI),height=0.0,size=1, colour="black")+
   geom_vline(xintercept=0,linetype="dashed")+
-  scale_x_continuous("Mean Breakdown Parameter Estimate") +
+  scale_x_continuous(breaks=seq(-3,4,2), limits=c(-3,4), "estimated effect") +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(), 
         panel.background = element_blank(),
@@ -73,12 +74,32 @@ CResp01.plot<-ggplot(data=CResp01,aes(x=Estimate_Effects,y=Predictor_Variables))
         axis.title.y = element_text(size=0),
         plot.title = element_text(hjust = 0.5, vjust = -2))+
   theme(plot.title= element_text(size=16, face="bold"))
-CResp01.plot
+CResp01.plot_a
 ```
 
+```{r}
+CResp01.plot_b<-ggplot(data=CResp01,aes(x=Estimate_Effects,y=Predictor_Variables))+
+  geom_point(shape=1, size =5)+
+  geom_errorbarh(aes(xmin=LCI,xmax=UCI),height=0.0,size=1, colour="black")+
+  geom_vline(xintercept=0,linetype="dashed")+
+  scale_x_continuous(breaks=seq(-10000,11000,5000), limits=c(-10000,11000), "estimated effect") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(),
+        legend.position="none",
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.text.x = element_text(size=16, colour="black"),
+        axis.text.y = element_text(size=16, colour="black"),
+        axis.title.x = element_text(size=16),
+        axis.title.y = element_text(size=0),
+        plot.title = element_text(hjust = 0.5, vjust = -2))+
+  theme(plot.title= element_text(size=16, face="bold"))
+CResp01.plot_b
+```
 
+#Wood Cat Plots
 
-##Wood Cat Plots
 ```{r}
 WResp02 <- lmer(RespRateInd ~ scale(DO) + 
                  scale(Temp) + 
@@ -97,6 +118,17 @@ confint(WResp02)
 ```
 
 
+
+```{r, fig.height=6, fig.width=10}
+boxplot(spongedf$Breakdown~spongedf$Site)
+boxplot(spongedf$RespRateInd~spongedf$Site)
+```
+
+
+
+
+
+
 ```{r}
 WResp02 <- read.csv("WResp02.csv")
 
@@ -104,11 +136,11 @@ WResp02$Predictor_Variables<-factor(WResp02$Predictor_Variables,
                                        levels=WResp02$Predictor_Variables[order((WResp02$Estimate_Effects),
                                                                                    decreasing=TRUE)])
 
-WResp02.plot<-ggplot(data=WResp02,aes(x=Estimate_Effects,y=Predictor_Variables))+
+WResp02.plot_a<-ggplot(data=WResp02,aes(x=Estimate_Effects,y=Predictor_Variables))+
   geom_point(shape=1, size =5)+
   geom_errorbarh(aes(xmin=LCI,xmax=UCI),height=0.0,size=1, colour="black")+
   geom_vline(xintercept=0,linetype="dashed")+
-  scale_x_continuous("Mean Breakdown Parameter Estimate") +
+    scale_x_continuous(breaks=seq(-450,400,100), limits=c(-450,400), "estimated effect") +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(), 
         panel.background = element_blank(),
@@ -121,17 +153,38 @@ WResp02.plot<-ggplot(data=WResp02,aes(x=Estimate_Effects,y=Predictor_Variables))
         axis.title.y = element_text(size=0),
         plot.title = element_text(hjust = 0.5, vjust = -2))+
   theme(plot.title= element_text(size=16, face="bold"))
-WResp02.plot
+WResp02.plot_a
 ```
 
 
-
-
-
-
-
-
-
+```{r}
+WResp02.plot_b<-ggplot(data=WResp02,aes(x=Estimate_Effects,y=Predictor_Variables))+
+  geom_point(shape=1, size =5)+
+  geom_errorbarh(aes(xmin=LCI,xmax=UCI),height=0.0,size=1, colour="black")+
+  geom_vline(xintercept=0,linetype="dashed")+
+    scale_x_continuous(breaks=seq(-0.3,1,0.2), limits=c(-0.3,0.7), "estimated effect") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(),
+        legend.position="none",
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.text.x = element_text(size=16, colour="black"),
+        axis.text.y = element_text(size=16, colour="black"),
+        axis.title.x = element_text(size=16),
+        axis.title.y = element_text(size=0),
+        plot.title = element_text(hjust = 0.5, vjust = -2))+
+  theme(plot.title= element_text(size=16, face="bold"))
+WResp02.plot_b
+```
+```{r}
+WResp03 <- lmer(RespRateInd ~ scale(DO)+
+            (1 | Stream), data=wooddf4, REML = FALSE, na.action = "na.fail",
+           control = lmerControl(optCtrl = list(maxfun=20000)))
+summary(WResp03)
+confint(WResp03)
+```
+I'm not sure why the not all the mean estiamtes are centered in the confidence intervals. I will look into it. 
 
 
 
