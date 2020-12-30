@@ -1,0 +1,139 @@
+---
+title: "Cat Plots"
+author: "Emily Huff and James Wood"
+date: "12/28/2020"
+output: html_document
+---
+
+#Subsets
+```{r}
+microdf <- read.csv("Emily Data.csv")
+microdfa <- read.csv("Emily Data.csv")
+
+# this removed a big outlier data point (365) - a respiraton measurement of 8 (woodsdale creek) when rest were ~1 or 2. Will need to recalculate Site average if used. Also removed  (319) which had a resp about double the others at the Site. 
+microdf<-microdfa[-c(103,243,319,346, 348, 365), ]
+
+
+spongedf <- subset(microdf, Substrate=="Cellulose Sponge" & Week.Removed==4)
+wooddf4 <- subset(microdf, Substrate=="Wood Veneer" & Week.Removed==4)
+```
+
+#Libraries
+```{r}
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICcmodavg)
+library(scatterplot3d)
+library(cowplot)
+library(MuMIn)
+library(usdm)
+```
+
+
+##Sponge Cat Plot
+```{r}
+CResp01 <- lmer(RespRateInd ~ scale(DO) + 
+                 scale(Temp) + 
+                 scale(Turbidity) +
+                 scale(Chloride) +
+                 scale(H) +
+                 scale(SRP) +
+                 scale(DIN) +
+                 scale(Conductivity) +
+                 scale(Nitrate) +
+                 scale(Ammonium) +
+            (1 | Stream), data=spongedf, REML = FALSE, na.action = "na.fail",
+           control = lmerControl(optCtrl = list(maxfun=20000)))
+summary(CResp01)
+confint(CResp01)
+```
+
+```{r}
+CResp01 <- read.csv("CResp01.csv")
+
+CResp01$Predictor_Variables<-factor(CResp01$Predictor_Variables,
+                                       levels=CResp01$Predictor_Variables[order((CResp01$Estimate_Effects),
+                                                                                   decreasing=TRUE)])
+
+CResp01.plot<-ggplot(data=CResp01,aes(x=Estimate_Effects,y=Predictor_Variables))+
+  geom_point(shape=1, size =5)+
+  geom_errorbarh(aes(xmin=LCI,xmax=UCI),height=0.0,size=1, colour="black")+
+  geom_vline(xintercept=0,linetype="dashed")+
+  scale_x_continuous("Mean Breakdown Parameter Estimate") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(),
+        legend.position="none",
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.text.x = element_text(size=16, colour="black"),
+        axis.text.y = element_text(size=16, colour="black"),
+        axis.title.x = element_text(size=16),
+        axis.title.y = element_text(size=0),
+        plot.title = element_text(hjust = 0.5, vjust = -2))+
+  theme(plot.title= element_text(size=16, face="bold"))
+CResp01.plot
+```
+
+
+
+##Wood Cat Plots
+```{r}
+WResp02 <- lmer(RespRateInd ~ scale(DO) + 
+                 scale(Temp) + 
+                 scale(Turbidity) +
+                 scale(Chloride) +
+                 scale(H) +
+                 scale(SRP) +
+                 scale(DIN) +
+                 scale(Conductivity) +
+                 scale(Nitrate) +
+                 scale(Ammonium) +
+            (1 | Stream), data=wooddf4, REML = FALSE, na.action = "na.fail",
+           control = lmerControl(optCtrl = list(maxfun=20000)))
+summary(WResp02)
+confint(WResp02)
+```
+
+
+```{r}
+WResp02 <- read.csv("WResp02.csv")
+
+WResp02$Predictor_Variables<-factor(WResp02$Predictor_Variables,
+                                       levels=WResp02$Predictor_Variables[order((WResp02$Estimate_Effects),
+                                                                                   decreasing=TRUE)])
+
+WResp02.plot<-ggplot(data=WResp02,aes(x=Estimate_Effects,y=Predictor_Variables))+
+  geom_point(shape=1, size =5)+
+  geom_errorbarh(aes(xmin=LCI,xmax=UCI),height=0.0,size=1, colour="black")+
+  geom_vline(xintercept=0,linetype="dashed")+
+  scale_x_continuous("Mean Breakdown Parameter Estimate") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(),
+        legend.position="none",
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.text.x = element_text(size=16, colour="black"),
+        axis.text.y = element_text(size=16, colour="black"),
+        axis.title.x = element_text(size=16),
+        axis.title.y = element_text(size=0),
+        plot.title = element_text(hjust = 0.5, vjust = -2))+
+  theme(plot.title= element_text(size=16, face="bold"))
+WResp02.plot
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
