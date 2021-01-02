@@ -1,0 +1,412 @@
+---
+title: "Emma’s 2018 data"
+author: "Emily Huff and James Wood"
+date: "1/2/2021"
+output: html_document
+---
+
+
+```{r}
+emmadata <- read.csv("Emma Data.csv")
+
+emmaspongedf <-subset(emmadata, Substrate=="Cellulose" & Week.Removed==4)
+emmawooddf <-subset(emmadata, Substrate=="Wood" & Week.Removed==4)
+
+
+```
+
+#Loading Libraries
+```{r}
+library(lme4)
+library(ggplot2)
+library(ggmap)
+library(AICcmodavg)
+library(scatterplot3d)
+library(cowplot)
+library(MuMIn)
+library(usdm)
+```
+
+
+#VIF Stuff
+Collinearity problems with nitrate and ammonium
+```{r}
+cs10 <- data.frame(scale(emmadata$Conductivity),
+                  scale(emmadata$H),
+                  scale(emmadata$DO),
+                  scale(emmadata$Temp),
+                  scale(emmadata$SRP),
+                  scale(emmadata$Nitrate),
+                  scale(emmadata$Ammonium),
+                  scale(emmadata$DIN))
+cs20 <- vifstep(cs10, th = 10)
+cs20
+```
+
+
+
+
+
+#############################################################
+###Respiration
+#############################################################
+
+
+#####################################################################################
+##                        Sponge Models
+#####################################################################################
+
+Models for Respiration on Sponge substrates
+
+#####################################################################################
+#####################################################################################
+
+
+i removed chloride and turbidity from these models because those parameters werent measured in 2018
+
+Model selection based on AICc:
+
+         K   AICc Delta_AICc AICcWt Cum.Wt    LL
+model 8  4 -28.35       0.00   0.15   0.15 18.82
+model 6  4 -27.48       0.86   0.10   0.25 18.39
+model 12 5 -26.80       1.55   0.07   0.33 19.40
+model 31 5 -26.53       1.81   0.06   0.39 19.27
+model 22 5 -26.50       1.84   0.06   0.45 19.25
+model 15 5 -26.37       1.97   0.06   0.51 19.19
+
+6 models were within 2 AICc
+1 Ammonium
+2 DIN
+3 Temp + Ammonium
+4 DIN + DO
+5 H + Ammonium
+6 SRP + Ammonium
+```{r}
+Resp18c.models<-list()
+Resp18c.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[5]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[6]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[7]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[8]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[9]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=emmaspongedf, REML = FALSE)
+
+Resp18c.models[[10]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[11]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=emmaspongedf, REML = FALSE)
+
+Resp18c.models[[13]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[14]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[15]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=emmaspongedf, REML = FALSE)
+
+Resp18c.models[[16]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[17]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[18]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[19]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[20]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+
+Resp18c.models[[21]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[22]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[23]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[24]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=emmaspongedf, REML = FALSE)
+
+Resp18c.models[[25]]  <- lmer( RespRateInd~ scale(DIN) + scale(Nitrate)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[26]]  <- lmer( RespRateInd~ scale(DIN) + scale(Ammonium)+ (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[27]]  <- lmer( RespRateInd~ scale(DIN) + scale(SRP) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[28]]  <- lmer( RespRateInd~ scale(DIN) + scale(Temp) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[29]]  <- lmer( RespRateInd~ scale(DIN) + scale(Conductivity) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[30]]  <- lmer( RespRateInd~ scale(DIN) + scale(H) + (1 | Site), data=emmaspongedf, REML = FALSE)
+Resp18c.models[[31]]  <- lmer( RespRateInd~ scale(DIN) + scale(DO) + (1 | Site), data=emmaspongedf, REML = FALSE)
+
+
+## Creating a vector of names to trace back models in set
+bModnamesResp18c <- paste("model", 1:length(Resp18c.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Resp18c.models, modnames = bModnamesResp18c, sort = TRUE)
+```
+
+
+```{r}
+r.squaredGLMM(Resp18c.models[[8]])
+r.squaredGLMM(Resp18c.models[[6]])
+r.squaredGLMM(Resp18c.models[[12]])
+r.squaredGLMM(Resp18c.models[[31]])
+r.squaredGLMM(Resp18c.models[[22]])
+r.squaredGLMM(Resp18c.models[[15]])
+```
+
+
+
+```{r}
+confint(Resp18c.models[[8]])
+confint(Resp18c.models[[6]])
+```
+
+
+#####################################################################################
+##                        Wood Models
+#####################################################################################
+
+
+## Models for Respiration on Wood substrates
+
+#####################################################################################
+#####################################################################################
+
+
+
+Model selection based on AICc:
+
+         K    AICc Delta_AICc AICcWt Cum.Wt    LL
+model 16 5 -119.30       0.00   0.10   0.10 65.68
+model 4  4 -118.89       0.41   0.08   0.18 64.11
+model 1  3 -118.87       0.44   0.08   0.26 62.82
+model 19 5 -118.72       0.58   0.07   0.33 65.39
+model 9  4 -118.69       0.61   0.07   0.40 64.01
+model 18 5 -118.50       0.80   0.07   0.47 65.29
+model 5  4 -118.15       1.15   0.06   0.53 63.74
+model 31 5 -118.01       1.29   0.05   0.58 65.04
+model 2  4 -118.00       1.30   0.05   0.63 63.67
+model 17 5 -117.33       1.97   0.04   0.66 64.70
+
+10 models were within 2 AICc
+1 DO + H
+2 DO
+3 null
+4 DO + Nitrate
+5 SRP
+6 DO + SRP
+7 Temp
+8 DIN + DO
+9 Conductivity
+10 DO + Temp
+```{r}
+Resp18w.models<-list()
+Resp18w.models[[1]]  <- lmer( RespRateInd~ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[2]]  <- lmer( RespRateInd~ scale(Conductivity) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[3]]  <- lmer( RespRateInd~ scale(H) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[4]]  <- lmer( RespRateInd~ scale(DO) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[5]]  <- lmer( RespRateInd~ scale(Temp) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[6]]  <- lmer( RespRateInd~ scale(DIN) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[7]]  <- lmer( RespRateInd~ scale(Nitrate) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[8]]  <- lmer( RespRateInd~ scale(Ammonium) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[9]]  <- lmer( RespRateInd~ scale(SRP) + (1 | Site), data=emmawooddf, REML = FALSE)
+
+Resp18w.models[[10]]  <- lmer( RespRateInd~ scale(Temp) + scale(SRP) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[11]]  <- lmer( RespRateInd~ scale(Temp) + scale(Nitrate) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[12]]  <- lmer( RespRateInd~ scale(Temp) + scale(Ammonium) + (1 | Site), data=emmawooddf, REML = FALSE)
+
+Resp18w.models[[13]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(SRP) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[14]]  <- lmer( RespRateInd~ scale(Nitrate) + scale(Ammonium) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[15]]  <- lmer( RespRateInd~ scale(SRP) + scale(Ammonium) + (1 | Site), data=emmawooddf, REML = FALSE)
+
+Resp18w.models[[16]]  <- lmer( RespRateInd~ scale(DO) + scale (H) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[17]]  <- lmer( RespRateInd~ scale(DO) + scale(Temp)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[18]]  <- lmer( RespRateInd~ scale(DO) + scale(SRP)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[19]]  <- lmer( RespRateInd~ scale(DO) + scale(Nitrate)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[20]]  <- lmer( RespRateInd~ scale(DO) + scale(Ammonium)+ (1 | Site), data=emmawooddf, REML = FALSE)
+
+Resp18w.models[[21]]  <- lmer( RespRateInd~ scale(H) + scale(Nitrate)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[22]]  <- lmer( RespRateInd~ scale(H) + scale(Ammonium)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[23]]  <- lmer( RespRateInd~ scale(H) + scale(SRP) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[24]]  <- lmer( RespRateInd~ scale(H) + scale(Temp) + (1 | Site), data=emmawooddf, REML = FALSE)
+
+Resp18w.models[[25]]  <- lmer( RespRateInd~ scale(DIN) + scale(Nitrate)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[26]]  <- lmer( RespRateInd~ scale(DIN) + scale(Ammonium)+ (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[27]]  <- lmer( RespRateInd~ scale(DIN) + scale(SRP) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[28]]  <- lmer( RespRateInd~ scale(DIN) + scale(Temp) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[29]]  <- lmer( RespRateInd~ scale(DIN) + scale(Conductivity) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[30]]  <- lmer( RespRateInd~ scale(DIN) + scale(H) + (1 | Site), data=emmawooddf, REML = FALSE)
+Resp18w.models[[31]]  <- lmer( RespRateInd~ scale(DIN) + scale(DO) + (1 | Site), data=emmawooddf, REML = FALSE)
+
+
+## Creating a vector of names to trace back models in set
+bModnamesResp18w <- paste("model", 1:length(Resp18w.models), sep = " ")
+
+##generate AICc table from candidate models so that you can control the model
+aictab(cand.set = Resp18w.models, modnames = bModnamesResp18w, sort = TRUE)
+```
+
+
+```{r}
+r.squaredGLMM(Resp18w.models[[16]])
+r.squaredGLMM(Resp18w.models[[4]])
+r.squaredGLMM(Resp18w.models[[1]])
+r.squaredGLMM(Resp18w.models[[19]])
+r.squaredGLMM(Resp18w.models[[9]])
+r.squaredGLMM(Resp18w.models[[18]])
+r.squaredGLMM(Resp18w.models[[5]])
+r.squaredGLMM(Resp18w.models[[31]])
+r.squaredGLMM(Resp18w.models[[2]])
+r.squaredGLMM(Resp18w.models[[17]])
+```
+
+
+```{r}
+confint(Resp18w.models[[16]])
+confint(Resp18w.models[[4]])
+```
+
+
+
+
+
+#############################################################
+#Breakdown
+#############################################################
+
+
+#############################################################
+#Sponge Breakdown
+#############################################################
+
+```{r}
+emmabd <- read.csv("for breakdown for emma data.csv")
+
+emmaspongebd <- subset(emmabd, Substrate=="Cellulose")
+emmawoodbd <- subset(emmabd, Substrate=="Wood")
+```
+
+Model selection based on AICc:
+
+         K   AICc Delta_AICc AICcWt Cum.Wt    LL
+model 9  4 -72.57       0.00   0.27   0.27 44.28
+model 6  3 -71.31       1.26   0.15   0.42 40.65
+model 8  3 -70.93       1.64   0.12   0.54 40.47
+model 2  3 -70.75       1.82   0.11   0.65 40.37
+
+4 models were within 2 AICc
+1 Temp + SRP
+2 Nitrate
+3 SRP
+4 H
+```{r}
+Breakdown18C<-list()
+ Breakdown18C[[1]]  <- lm( Breakdown~ scale(Conductivity) , data=emmaspongebd)
+ Breakdown18C[[2]]  <- lm( Breakdown~ scale(H) , data=emmaspongebd)
+ Breakdown18C[[3]]  <- lm( Breakdown~ scale(DO) , data=emmaspongebd)
+ Breakdown18C[[4]]  <- lm( Breakdown~ scale(Temp) , data=emmaspongebd)
+ Breakdown18C[[5]]  <- lm( Breakdown~ scale(DIN) , data=emmaspongebd)
+ Breakdown18C[[6]]  <- lm( Breakdown~ scale(Nitrate) , data=emmaspongebd)
+ Breakdown18C[[7]]  <- lm( Breakdown~ scale(Ammonium) , data=emmaspongebd)
+ Breakdown18C[[8]]  <- lm( Breakdown~ scale(SRP) , data=emmaspongebd)
+ 
+Breakdown18C[[9]]  <- lm( Breakdown~ scale(Temp) + scale(SRP), data=emmaspongebd)
+Breakdown18C[[10]]  <- lm( Breakdown~ scale(Temp) + scale(Nitrate), data=emmaspongebd)
+Breakdown18C[[11]]  <- lm( Breakdown~ scale(Temp) + scale(Ammonium), data=emmaspongebd)
+Breakdown18C[[12]]  <- lm( Breakdown~ scale(Temp) + scale(DIN), data=emmaspongebd)
+
+Breakdown18C[[13]]  <- lm( Breakdown~ scale(DIN) + scale(SRP), data=emmaspongebd)
+Breakdown18C[[14]]  <- lm( Breakdown~ scale(DIN) + scale(Nitrate), data=emmaspongebd)
+Breakdown18C[[15]]  <- lm( Breakdown~ scale(DIN) + scale(Ammonium), data=emmaspongebd)
+
+Breakdown18C[[16]]  <- lm( Breakdown~ scale(Nitrate) + scale(SRP), data=emmaspongebd)
+Breakdown18C[[17]]  <- lm( Breakdown~ scale(Nitrate) + scale(Ammonium), data=emmaspongebd)
+Breakdown18C[[18]]  <- lm( Breakdown~ scale(SRP) + scale(Ammonium), data=emmaspongebd)
+
+Breakdown18C[[19]]  <- lm( Breakdown~ scale(DO) + scale (H), data=emmaspongebd)
+Breakdown18C[[20]]  <- lm( Breakdown~ scale(DO) + scale(Temp), data=emmaspongebd)
+Breakdown18C[[21]]  <- lm( Breakdown~ scale(DO) + scale(DIN), data=emmaspongebd)
+Breakdown18C[[22]]  <- lm( Breakdown~ scale(DO) + scale(SRP), data=emmaspongebd)
+Breakdown18C[[23]]  <- lm( Breakdown~ scale(DO) + scale(Nitrate), data=emmaspongebd)
+Breakdown18C[[24]]  <- lm( Breakdown~ scale(DO) + scale(Ammonium), data=emmaspongebd)
+
+Breakdown18C[[25]]  <- lm( Breakdown~ scale(H) + scale(DIN), data=emmaspongebd)
+Breakdown18C[[26]]  <- lm( Breakdown~ scale(H) + scale(Nitrate), data=emmaspongebd)
+Breakdown18C[[27]]  <- lm( Breakdown~ scale(H) + scale(Ammonium), data=emmaspongebd)
+Breakdown18C[[28]]  <- lm( Breakdown~ scale(H) + scale(SRP), data=emmaspongebd)
+Breakdown18C[[29]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=emmaspongebd)
+
+ ## Creating a vector of names to trace back models in set
+ ModnamesBreakdown18C <- paste("model", 1:length(Breakdown18C), sep = " ")
+
+ ##generate AICc table from candidate models so that you can control the model
+ aictab(cand.set = Breakdown18C, modnames = ModnamesBreakdown18C, sort = TRUE)
+```
+
+
+```{r}
+summary(Breakdown18C[[9]])
+summary(Breakdown18C[[6]])
+summary(Breakdown18C[[8]])
+summary(Breakdown18C[[2]])
+```
+
+
+#############################################################
+#Wood Breakdown
+#############################################################
+
+Model selection based on AICc:
+
+         K   AICc Delta_AICc AICcWt Cum.Wt    LL
+model 26 4 -89.88       0.00   0.56   0.56 55.61
+
+this one just had one top model of
+H + Nitrate
+```{r}
+Breakdown18W<-list()
+ Breakdown18W[[1]]  <- lm( Breakdown~ scale(Conductivity) , data=emmawoodbd)
+ Breakdown18W[[2]]  <- lm( Breakdown~ scale(H) , data=emmawoodbd)
+ Breakdown18W[[3]]  <- lm( Breakdown~ scale(DO) , data=emmawoodbd)
+ Breakdown18W[[4]]  <- lm( Breakdown~ scale(Temp) , data=emmawoodbd)
+ Breakdown18W[[5]]  <- lm( Breakdown~ scale(DIN) , data=emmawoodbd)
+ Breakdown18W[[6]]  <- lm( Breakdown~ scale(Nitrate) , data=emmawoodbd)
+ Breakdown18W[[7]]  <- lm( Breakdown~ scale(Ammonium) , data=emmawoodbd)
+ Breakdown18W[[8]]  <- lm( Breakdown~ scale(SRP) , data=emmawoodbd)
+ 
+Breakdown18W[[9]]  <- lm( Breakdown~ scale(Temp) + scale(SRP), data=emmawoodbd)
+Breakdown18W[[10]]  <- lm( Breakdown~ scale(Temp) + scale(Nitrate), data=emmawoodbd)
+Breakdown18W[[11]]  <- lm( Breakdown~ scale(Temp) + scale(Ammonium), data=emmawoodbd)
+Breakdown18W[[12]]  <- lm( Breakdown~ scale(Temp) + scale(DIN), data=emmawoodbd)
+
+Breakdown18W[[13]]  <- lm( Breakdown~ scale(DIN) + scale(SRP), data=emmawoodbd)
+Breakdown18W[[14]]  <- lm( Breakdown~ scale(DIN) + scale(Nitrate), data=emmawoodbd)
+Breakdown18W[[15]]  <- lm( Breakdown~ scale(DIN) + scale(Ammonium), data=emmawoodbd)
+
+Breakdown18W[[16]]  <- lm( Breakdown~ scale(Nitrate) + scale(SRP), data=emmawoodbd)
+Breakdown18W[[17]]  <- lm( Breakdown~ scale(Nitrate) + scale(Ammonium), data=emmawoodbd)
+Breakdown18W[[18]]  <- lm( Breakdown~ scale(SRP) + scale(Ammonium), data=emmawoodbd)
+
+Breakdown18W[[19]]  <- lm( Breakdown~ scale(DO) + scale (H), data=emmawoodbd)
+Breakdown18W[[20]]  <- lm( Breakdown~ scale(DO) + scale(Temp), data=emmawoodbd)
+Breakdown18W[[21]]  <- lm( Breakdown~ scale(DO) + scale(DIN), data=emmawoodbd)
+Breakdown18W[[22]]  <- lm( Breakdown~ scale(DO) + scale(SRP), data=emmawoodbd)
+Breakdown18W[[23]]  <- lm( Breakdown~ scale(DO) + scale(Nitrate), data=emmawoodbd)
+Breakdown18W[[24]]  <- lm( Breakdown~ scale(DO) + scale(Ammonium), data=emmawoodbd)
+
+Breakdown18W[[25]]  <- lm( Breakdown~ scale(H) + scale(DIN), data=emmawoodbd)
+Breakdown18W[[26]]  <- lm( Breakdown~ scale(H) + scale(Nitrate), data=emmawoodbd)
+Breakdown18W[[27]]  <- lm( Breakdown~ scale(H) + scale(Ammonium), data=emmawoodbd)
+Breakdown18W[[28]]  <- lm( Breakdown~ scale(H) + scale(SRP), data=emmawoodbd)
+Breakdown18W[[29]]  <- lm( Breakdown~ scale(H) + scale(Temp), data=emmawoodbd)
+
+ ## Creating a vector of names to trace back models in set
+ ModnamesBreakdown18W <- paste("model", 1:length(Breakdown18W), sep = " ")
+
+ ##generate AICc table from candidate models so that you can control the model
+ aictab(cand.set = Breakdown18W, modnames = ModnamesBreakdown18W, sort = TRUE)
+```
+
+
+```{r}
+summary(Breakdown18W[[26]])
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
